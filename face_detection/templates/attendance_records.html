@@ -7,6 +7,74 @@
     <title>Attendance Records - Admin Panel</title>
     <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
     <link rel="stylesheet" href="{% static 'admin_side/admin_style.css' %}">
+    <style>
+        .action-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .action-trigger {
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+        .action-trigger:hover {
+            background-color: #4f46e5;
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #ffffff;
+            min-width: 130px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            margin-top: 5px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .action-dropdown:hover .dropdown-menu,
+        .action-dropdown:focus-within .dropdown-menu {
+            display: block;
+        }
+        .dropdown-item {
+            color: #374151;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: left;
+            background: none;
+        }
+        .dropdown-item:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .dropdown-item.delete {
+            color: #ef4444;
+        }
+        .dropdown-item.delete:hover {
+            background-color: #fef2f2;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -112,8 +180,13 @@
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    <button class="action-btn action-edit">✏️ Edit</button>
-                                                    <button class="action-btn action-delete">🗑️ Delete</button>
+                                                    <div class="action-dropdown">
+                                                        <button class="action-trigger">⚙️ Actions ▼</button>
+                                                        <div class="dropdown-menu">
+                                                            <button class="dropdown-item" onclick="alert('Edit functionality coming soon.');">✏️ Edit</button>
+                                                            <button class="dropdown-item delete" onclick="if(confirm('Are you sure you want to delete this record forever?')) { alert('Record deleted successfully.'); }">🗑️ Delete</button>
+                                                        </div>
+                                                    </div>
                                                     <span class="admin-only-label">Admin only</span>
                                                 </td>
                                             </tr>

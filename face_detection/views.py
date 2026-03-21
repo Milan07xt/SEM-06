@@ -15,6 +15,7 @@ from pathlib import Path
 from datetime import datetime, timezone as dt_timezone
 import cv2
 import os
+import uuid
 import json as json_module
 import sqlite3
 from urllib.parse import quote
@@ -70,6 +71,29 @@ def _decode_data_url_to_bgr(image_data_url):
     if len(image_array.shape) == 2:
         return cv2.cvtColor(image_array, cv2.COLOR_GRAY2BGR)
     return image_array
+
+
+def _save_image_data_to_disk(image_data_url, save_dir, prefix='capture'):
+    """Save a base64 image data URL to disk and return the file path."""
+    if not image_data_url or ',' not in image_data_url:
+        raise ValueError('Invalid image data URL')
+
+    save_path = Path(save_dir)
+    save_path.mkdir(parents=True, exist_ok=True)
+
+    header, encoded = image_data_url.split(',', 1)
+    image_bytes = base64.b64decode(encoded)
+    extension = 'jpg'
+    if 'png' in header.lower():
+        extension = 'png'
+
+    file_name = f"{prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.{extension}"
+    full_path = save_path / file_name
+
+    with open(full_path, 'wb') as f:
+        f.write(image_bytes)
+
+    return str(full_path)
 
 
 def _detect_primary_face(gray_image):
@@ -979,27 +1003,53 @@ def _save_face_encodings(encodings_data):
 def _get_known_faces_db_path():
     """Return path to known-faces SQLite database (attendance.db)."""
     configured_path = (os.getenv('ATTENDANCE_DB_PATH') or '').strip()
-    requested_windows_path = Path(r'C:\Users\ABC\Downloads\SEM-06\face_detection\data\attendane.db')
+    attendance_db_path = _get_attendance_data_dir() / 'attendance.db'
+    old_db_path = Path(r'C:\Users\ABC\Downloads\SEM-06\face_detection\data\attendane.db')
 
-    candidate_paths = []
-    if configured_path:
-        candidate_paths.append(Path(configured_path).expanduser())
-    candidate_paths.append(requested_windows_path)
-    candidate_paths.append(_get_attendance_data_dir() / 'attendance.db')
-
-    for db_path in candidate_paths:
+    # Migrate data from attendane.db to attendance.db if attendane.db exists
+    if old_db_path.exists() and attendance_db_path != old_db_path:
         try:
-            db_path.parent.mkdir(parents=True, exist_ok=True)
-            with db_path.open('a', encoding='utf-8'):
-                pass
-            return db_path
-        except Exception:
-            continue
+            import sqlite3
+            # Open both databases
+            src_conn = sqlite3.connect(str(old_db_path))
+            dst_conn = sqlite3.connect(str(attendance_db_path))
+            src_cursor = src_conn.cursor()
+            dst_cursor = dst_conn.cursor()
 
-    fallback_db = _first_writable_dir([Path(__file__).resolve().parent.parent / 'runtime_data']) / 'attendance.db'
-    if not fallback_db.exists():
-        fallback_db.touch(exist_ok=True)
-    return fallback_db
+            # Get all tables from old db
+            src_cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables = [row[0] for row in src_cursor.fetchall()]
+            for table in tables:
+                # Create table in new db if not exists
+                src_cursor.execute(f"SELECT sql FROM sqlite_master WHERE type='table' AND name='{table}'")
+                create_sql = src_cursor.fetchone()[0]
+                try:
+                    dst_cursor.execute(create_sql)
+                except Exception:
+                    pass
+                # Copy data
+                src_cursor.execute(f"SELECT * FROM {table}")
+                rows = src_cursor.fetchall()
+                if rows:
+                    placeholders = ','.join(['?'] * len(rows[0]))
+                    try:
+                        dst_cursor.executemany(f"INSERT OR IGNORE INTO {table} VALUES ({placeholders})", rows)
+                    except Exception:
+                        pass
+            # Record the old db path in a migration_log table
+            dst_cursor.execute("CREATE TABLE IF NOT EXISTS migration_log (id INTEGER PRIMARY KEY AUTOINCREMENT, old_db_path TEXT, migrated_at TEXT)")
+            from datetime import datetime
+            dst_cursor.execute("INSERT INTO migration_log (old_db_path, migrated_at) VALUES (?, ?)", (str(old_db_path), datetime.utcnow().isoformat()))
+            dst_conn.commit()
+            src_conn.close()
+            dst_conn.close()
+            # Remove the old db
+            old_db_path.unlink()
+        except Exception:
+            pass
+
+    # Always return the new attendance.db path
+    return attendance_db_path
 
 
 def _ensure_known_faces_db():
@@ -1798,6 +1848,10 @@ def api_register_face(request):
             previous_bgr = None
             if previous_image_data:
                 try:
+                    _save_image_data_to_disk(previous_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix=f'register_{username}_previous')
+                except Exception:
+                    pass
+                try:
                     previous_bgr = _decode_data_url_to_bgr(previous_image_data)
                 except Exception:
                     previous_bgr = None
@@ -1847,6 +1901,10 @@ def api_register_face(request):
                     image = Image.open(BytesIO(image_bytes)).convert('RGB')
                     image_path = user_folder / f'face_{timestamp_prefix}_{idx:02d}.jpg'
                     image.save(image_path, format='JPEG', quality=95)
+                    try:
+                        _save_image_data_to_disk(raw_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix=f'register_{username}_{idx:02d}')
+                    except Exception:
+                        pass
                     saved_images_count += 1
                 except Exception:
                     continue
@@ -1869,13 +1927,13 @@ def api_register_face(request):
             hist_64 = cv2.calcHist([face_roi], [0], None, [64], [0, 256])
             hist_128 = cv2.calcHist([face_roi], [0], None, [128], [0, 256])
             
-            # Normalize histograms
-            hist_256 = cv2.normalize(hist_256, hist_256).flatten().tolist()
-            hist_64 = cv2.normalize(hist_64, hist_64).flatten().tolist()
-            hist_128 = cv2.normalize(hist_128, hist_128).flatten().tolist()
+            # Normalize and combine
+            hist_256 = cv2.normalize(hist_256, hist_256).flatten().astype('float32')
+            hist_64 = cv2.normalize(hist_64, hist_64).flatten().astype('float32')
+            hist_128 = cv2.normalize(hist_128, hist_128).flatten().astype('float32')
             
-            # Combine all histograms into one encoding
-            combined_hist = hist_256 + hist_64 + hist_128
+            # Combine all histograms
+            hist_normalized = np.concatenate([hist_256, hist_64, hist_128]).astype('float32')
             
             # Load existing encodings from DB or create new
             encodings_data = _load_face_encodings()
@@ -1883,7 +1941,7 @@ def api_register_face(request):
             # Store encodings
             if username not in encodings_data:
                 encodings_data[username] = []
-            encodings_data[username].append(combined_hist)
+            encodings_data[username].append(hist_normalized)
             
             # Save updated encodings to DB
             _save_face_encodings(encodings_data)
@@ -1966,9 +2024,18 @@ def api_mark_attendance_face(request):
                     'message': f'Invalid image format: {str(e)}'
                 })
 
+            try:
+                _save_image_data_to_disk(image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix='attendance')
+            except Exception:
+                pass
+
             # Optional previous frame for temporal liveness
             previous_bgr = None
             if previous_image_data:
+                try:
+                    _save_image_data_to_disk(previous_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix='attendance_previous')
+                except Exception:
+                    pass
                 try:
                     previous_bgr = _decode_data_url_to_bgr(previous_image_data)
                 except Exception:
@@ -1997,7 +2064,7 @@ def api_mark_attendance_face(request):
                 
                 if face_box is None:
                     use_ai_detection = bool(data.get('use_ai_detection', False))
-                    ai_feedback = _ai_live_face_feedback(image_data) if use_ai_detection else None
+                    ai_feedback = _ai_live_face_feedback(image_cv) if use_ai_detection else None
 
                     message = 'No face detected in image'
                     instruction = 'Please center your face in frame with better lighting.'
@@ -2390,8 +2457,8 @@ def api_database_status(request):
             known_faces_dir = _get_known_faces_dir()
             attendance_file = _get_attendance_file()
             db_file = _get_known_faces_db_path()
-            requested_db_display_path = r'C:\Users\ABC\Downloads\SEM-06\face_detection\data\attendane.db'
             db_file_abs = db_file.expanduser().resolve()
+            requested_db_display_path = str(db_file_abs)
             
             # Count registered users
             registered_count = 0
@@ -2415,6 +2482,7 @@ def api_database_status(request):
             # Known-faces SQLite DB stats (attendance.db)
             known_faces_db = {'db_path': '', 'total_rows': 0}
             known_faces_db = _get_known_faces_db_stats()
+            requested_db_display_path = str(db_file_abs)
 
             return JsonResponse({
                 'success': True,
@@ -2742,17 +2810,22 @@ def api_update_face_photo(request):
     try:
         data = json.loads(request.body)
         username = (data.get('username') or '').strip()
-        image_data = data.get('image', '')
+        raw_image_data = data.get('image', '')
 
         if not username:
             return JsonResponse({'success': False, 'message': 'Username is required'}, status=400)
         
-        if not image_data or not image_data.startswith('data:image'):
+        if not raw_image_data or not raw_image_data.startswith('data:image'):
             return JsonResponse({'success': False, 'message': 'Valid image data is required'}, status=400)
+
+        try:
+            _save_image_data_to_disk(raw_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix=f'update_face_{username}')
+        except Exception:
+            pass
 
         # Decode base64 image
         try:
-            image_data = image_data.split(',')[1]
+            image_data = raw_image_data.split(',')[1]
             image_bytes = base64.b64decode(image_data)
             image = Image.open(BytesIO(image_bytes))
             image_np = np.array(image)
