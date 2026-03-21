@@ -38,7 +38,9 @@ DEBUG = _env_bool('DJANGO_DEBUG', True)
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'sem-06-production.up.railway.app'
+    'sem-06-production.up.railway.app',
+    '*',
+    '.railway.app'
 ]
 
 CSRF_TRUSTED_ORIGINS = _env_list('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:8000,http://localhost:8000')
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -94,7 +97,7 @@ WSGI_APPLICATION = 'Face_Detection_Project.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
 }
 
 DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
