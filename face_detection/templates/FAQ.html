@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Face Recognition Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <style>
+        .faq-page {
+            min-height: calc(100vh - 220px);
+            padding: 48px 24px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+        }
+
+        .faq-container {
+            max-width: 920px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(44, 47, 74, 0.12);
+            padding: 36px;
+        }
+
+        .faq-title {
+            margin: 0 0 8px;
+            color: #2c2f4a;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .faq-subtitle {
+            margin: 0 0 28px;
+            color: #596080;
+            text-align: center;
+            font-size: 1.05rem;
+        }
+
+        .faq-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .faq-item {
+            border: 1px solid #e8ebf7;
+            border-radius: 12px;
+            padding: 18px;
+            background: #fafbff;
+        }
+
+        .faq-item h3 {
+            margin: 0 0 8px;
+            color: #2c2f4a;
+            font-size: 1.05rem;
+        }
+
+        .faq-item p {
+            margin: 0;
+            color: #4c5577;
+            line-height: 1.65;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="faq-page">
+        <section class="faq-container">
+            <h1 class="faq-title">Frequently Asked Questions</h1>
+            <p class="faq-subtitle">Common questions and quick solutions for the attendance system.</p>
+
+            <div class="faq-list">
+                <article class="faq-item">
+                    <h3>How do I mark attendance?</h3>
+                    <p>Open Mark Attendance, allow camera access, center your face, and submit your live frame.</p>
+                </article>
+
+                <article class="faq-item">
+                    <h3>Why does liveness check fail?</h3>
+                    <p>Make a slight natural movement (like blinking), keep lighting clear, and avoid blurry camera frames.</p>
+                </article>
+
+                <article class="faq-item">
+                    <h3>I am registered but not recognized. What should I do?</h3>
+                    <p>Re-register with a clearer face image and ensure your face is fully visible during attendance capture.</p>
+                </article>
+
+                <article class="faq-item">
+                    <h3>Where can I get support?</h3>
+                    <p>Use the Contact Us page for direct support and include your username for faster help.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    {% include 'includes/footer.html' %}
+</body>
+</html>

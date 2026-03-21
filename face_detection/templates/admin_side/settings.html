@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Administrator Dashboard</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime"></div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="dashboard-top-nav">
+                <div class="sidebar-nav">
+                    <button onclick="location.href='/admin_dashboard/'" class="sidebar-nav-btn active">
+                        <span class="icon">📊</span> Dashboard
+                    </button>
+                    <button onclick="location.href='/mark_attendance/'" class="sidebar-nav-btn">
+                        <span class="icon">✓</span> Mark Attendance
+                    </button>
+                    <button onclick="location.href='/register_user/'" class="sidebar-nav-btn">
+                        <span class="icon">📸</span> Register User
+                    </button>
+                    <button onclick="location.href='/view_user/'" class="sidebar-nav-btn">
+                        <span class="icon">👥</span> Users
+                    </button>
+                    <button onclick="location.href='/attendance_records/'" class="sidebar-nav-btn">
+                        <span class="icon">📋</span> Records
+                    </button>
+                    <button onclick="location.href='/settings/'" class="sidebar-nav-btn">
+                        <span class="icon">⚙️</span> Settings
+                    </button>
+                </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="admin-card">
+        <h2>⚙️ System Settings</h2>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Settings Tabs -->
+        <div style="display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px;">
+            <button class="nav-tab" onclick="goToGeneralDetails()" id="generalTab">🔧 General</button>
+            <button class="nav-tab" onclick="goToDatabaseDetails()" id="databaseTab">💾 Database</button>
+            <button class="nav-tab" onclick="goToSecurityDetails()" id="securityTab">🔒 Security</button>
+            <button class="nav-tab" onclick="goToBackupDetails()" id="backupTab">📦 Backup</button>
+        </div>
+
+        <!-- General Settings -->
+        <div id="generalTab-content" class="tab-content">
+            <h3>🔧 General Settings</h3>
+            <form style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="form-group">
+                    <label>System Name:</label>
+                    <input type="text" class="form-control" value="Face Attendance System" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Version:</label>
+                    <input type="text" class="form-control" value="3.0" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Installation Date:</label>
+                    <input type="text" class="form-control" id="installDate" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Time Zone:</label>
+                    <select class="form-control">
+                        <option>UTC</option>
+                        <option selected>IST (Indian Standard Time)</option>
+                        <option>EST (Eastern Standard Time)</option>
+                        <option>PST (Pacific Standard Time)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Database Settings -->
+        <div id="databaseTab-content" class="tab-content" style="display: none;">
+            <h3>💾 Database Settings</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="form-group">
+                    <label>Database Type:</label>
+                    <input type="text" class="form-control" value="SQLite3" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Database Size:</label>
+                    <input type="text" class="form-control" value="Calculating..." id="dbSize">
+                </div>
+                <div class="form-group">
+                    <label>Total Records:</label>
+                    <input type="text" class="form-control" value="Loading..." id="totalRecords">
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="optimizeDatabase()">🔧 Optimize Database</button>
+                <button class="btn btn-secondary" onclick="location.href='/database_status/'">📊 View Status</button>
+            </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div id="securityTab-content" class="tab-content" style="display: none;">
+            <h3>🔒 Security Settings</h3>
+            <div style="display: grid; gap: 20px;">
+                <div class="form-group">
+                    <label>Change Admin Password</label>
+                    <input type="password" class="form-control" id="newPassword" placeholder="New password">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password">
+                </div>
+                <button class="btn btn-success" onclick="changePassword()">🔐 Update Password</button>
+            </div>
+            <hr style="margin: 30px 0;">
+            <div>
+                <h4>Session Management</h4>
+                <p>Current Session: <strong id="sessionInfo">Active</strong></p>
+                <button class="btn btn-danger" onclick="logout()">🔓 Logout All Sessions</button>
+            </div>
+        </div>
+
+        <!-- Backup Settings -->
+        <div id="backupTab-content" class="tab-content" style="display: none;">
+            <h3>📦 Backup & Restore</h3>
+            <div style="display: grid; gap: 15px;">
+                <div style="padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                    <h4>📥 Backup Database</h4>
+                    <p>Download a backup of your database and all user data</p>
+                    <button class="btn btn-primary" onclick="backupDatabase()">📥 Download Backup</button>
+                </div>
+                <div style="padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                    <h4>🔄 Restore from Backup</h4>
+                    <p>Restore your database from a previous backup</p>
+                    <input type="file" id="backupFile" class="form-control" accept=".db,.zip" style="margin-bottom: 10px;">
+                    <button class="btn btn-warning" onclick="restoreDatabase()">🔄 Restore Backup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/admin_dashboard'">← Back to Home</button>
+        <button class="btn btn-danger" onclick="logout()">🔓 Logout</button>
+    </div>
+
+    <script>
+        document.getElementById('adminUsername').textContent = localStorage.getItem('adminUsername') || 'Admin';
+        document.getElementById('installDate').value = new Date().toLocaleDateString();
+        
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.getElementById(tabName + '-content').style.display = 'block';
+        }
+
+        function goToGeneralDetails() {
+            location.href = '/settings.html';
+        }
+
+        function goToDatabaseDetails() {
+            location.href = '/database.html';
+        }
+
+        function goToSecurityDetails() {
+            location.href = '/security.html';
+        }
+
+        function goToBackupDetails() {
+            location.href = '/backup.html';
+        }
+
+        function optimizeDatabase() {
+            alert('Database optimization initiated. This may take a few moments...');
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            if(!newPass || !confirmPass) {
+                alert('Please fill in all fields');
+                return;
+            }
+            if(newPass !== confirmPass) {
+                alert('Passwords do not match');
+                return;
+            }
+            alert('Password changed successfully!');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        function backupDatabase() {
+            alert('Database backup initiated. Your backup will download shortly...');
+        }
+
+        function restoreDatabase() {
+            const file = document.getElementById('backupFile').files[0];
+            if(!file) {
+                alert('Please select a backup file');
+                return;
+            }
+            alert('Restoring backup... This will take a few moments.');
+        }
+
+        function logout() {
+            if(confirm('Are you sure? This will logout all admin sessions.')) {
+                localStorage.removeItem('adminUsername');
+                location.href = '/admin_login';
+            }
+        }
+
+        // Load database info
+        async function loadDatabaseInfo() {
+            try {
+                const response = await fetch('/api/database_status');
+                const data = await response.json();
+                if(data.success) {
+                    const totalRecordsEl = document.getElementById('totalRecords');
+                    const dbSizeEl = document.getElementById('dbSize');
+                    if (totalRecordsEl) {
+                        totalRecordsEl.value = data.attendance_records ?? data.total_records ?? 0;
+                    }
+                    if (dbSizeEl) {
+                        dbSizeEl.value = data.database_size || '-';
+                    }
+                }
+            } catch(err) {
+                console.error('Error loading DB info:', err);
+            }
+        }
+        loadDatabaseInfo();
+
+        // Open tab from URL hash (e.g., /settings/#security)
+        const tabFromHash = (window.location.hash || '').replace('#', '').trim().toLowerCase();
+        if (tabFromHash && ['general', 'database', 'security', 'backup'].includes(tabFromHash)) {
+            showTab(tabFromHash);
+        }
+    </script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

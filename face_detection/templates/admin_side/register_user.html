@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New User - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Administrator Dashboard</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime">3/1/2026, 2:51:09 pm</div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="dashboard-top-nav">
+                <div class="sidebar-nav">
+                    <button onclick="location.href='/admin_dashboard/'" class="sidebar-nav-btn active">
+                        <span class="icon">📊</span> Dashboard
+                    </button>
+                    <button onclick="location.href='/mark_attendance/'" class="sidebar-nav-btn">
+                        <span class="icon">✓</span> Mark Attendance
+                    </button>
+                    <button onclick="location.href='/register_user/'" class="sidebar-nav-btn">
+                        <span class="icon">📸</span> Register User
+                    </button>
+                    <button onclick="location.href='/view_user/'" class="sidebar-nav-btn">
+                        <span class="icon">👥</span> Users
+                    </button>
+                    <button onclick="location.href='/attendance_records/'" class="sidebar-nav-btn">
+                        <span class="icon">📋</span> Records
+                    </button>
+                    <button onclick="location.href='/settings/'" class="sidebar-nav-btn">
+                        <span class="icon">⚙️</span> Settings
+                    </button>
+                </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="admin-card">
+        <h2>📸 Register New User Face</h2>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Registration Form -->
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" class="form-control" placeholder="Enter full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email (Optional):</label>
+                <input type="email" id="email" class="form-control" placeholder="user@example.com">
+            </div>
+
+            <div class="form-group">
+                <label>Capture Face:</label>
+                <div class="video-container" id="videoContainer" style="display: none;">
+                    <video id="videoFeed" autoplay muted playsinline></video>
+                    <canvas id="captureCanvas"></canvas>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" id="startCameraBtn">📹 Start Camera</button>
+                    <button type="button" class="btn btn-success" id="captureBtn" disabled>📸 Capture Image</button>
+                    <button type="button" class="btn btn-secondary" id="clearBtn" disabled>🗑️ Clear</button>
+                </div>
+                <div id="capturedImages" style="margin-top: 15px; display: none;">
+                    <p style="color: #10b981; font-weight: 600;">✓ Image captured successfully!</p>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-success" id="registerSubmitBtn" disabled>✓ Register User</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- System Information -->
+    <div class="admin-card">
+        <h2>💻 System Information</h2>
+        <div class="system-info">
+            <div class="info-item">
+                <div class="info-label">System Version:</div>
+                <div class="info-value">2.0 (Modern)</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Database:</div>
+                <div class="info-value">SQLite3</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Server Status:</div>
+                <div class="info-value status-running">✓ Running</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/admin_dashboard'">← Back to Home</button>
+        <button class="btn btn-danger" onclick="logout()">🔓 Logout</button>
+    </div>
+
+    {% include 'includes/footer.html' %}
+
+    <script src="{% static 'register_user.js' %}"></script>
+</body>
+</html>

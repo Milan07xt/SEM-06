@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Face Recognition Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+  <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/live-detection" class="nav-link">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Face Recognition Attendance</h1>
+            <p class="hero-subtitle">Modern, Secure, and Automated Attendance Management System</p>
+            <div class="hero-buttons">
+                <a href="/live-detection" class="btn btn-primary">📸 Mark Attendance Now</a>
+                <a href="/register" class="btn btn-secondary">✍️ Register Your Face</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="face-animation">
+                <div class="face-box">
+                    <span class="eye left-eye">●</span>
+                    <span class="eye right-eye">●</span>
+                    <div class="smile">⌣</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2 class="section-title">Key Features</h2>
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Secure & Private</h3>
+                <p>Your facial data is encrypted and securely stored with advanced security protocols.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Fast Recognition</h3>
+                <p>Real-time face detection and recognition with sub-second processing speed.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Detailed Reports</h3>
+                <p>Generate comprehensive attendance reports with advanced filtering and export options.</p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Responsive Design</h3>
+                <p>Works seamlessly on desktop, tablet, and mobile devices.</p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Multi-User Support</h3>
+                <p>Support for unlimited users with individual profiles and history tracking.</p>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>Admin Control</h3>
+                <p>Comprehensive admin panel for managing users, attendance, and system settings.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Register Your Face</h3>
+                <p>Capture your face image using the registration feature. The system generates a unique face encoding.</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Face Detection</h3>
+                <p>When marking attendance, the system detects your face using advanced computer vision.</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Instant Matching</h3>
+                <p>Your face is compared with stored encodings to find a match.</p>
+            </div>
+            <div class="step-arrow">→</div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Record Attendance</h3>
+                <p>Attendance is automatically recorded with timestamp and status.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics">
+        <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Accuracy Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">&lt;1s</div>
+            <div class="stat-label">Processing Time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Users Supported</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Availability</div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="quick-start">
+        <h2 class="section-title">Quick Start Guide</h2>
+        <div class="quick-start-content">
+            <div class="quick-start-item">
+                <h3>👤 For Users</h3>
+                <ol>
+                    <li>Click "Register Your Face" to create your profile</li>
+                    <li>Capture a clear photo of your face</li>
+                    <li>Visit "Mark Attendance" anytime to mark yourself present</li>
+                    <li>View your attendance records in the Records section</li>
+                </ol>
+                <a href="/register" class="btn btn-small">Get Started</a>
+            </div>
+            <div class="quick-start-item">
+                <h3>🔑 For Administrators</h3>
+                <ol>
+                    <li>Log in to the Admin Dashboard</li>
+                    <li>Manage users and their profiles</li>
+                    <li>Monitor attendance records in real-time</li>
+                    <li>Generate and export reports</li>
+                </ol>
+                <a href="/admin-login" class="btn btn-small">Admin Login</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Ready to Get Started?</h2>
+        <p>Join our modern attendance system powered by facial recognition technology</p>
+        <div class="cta-buttons">
+            <a href="/register" class="btn btn-primary">Register Now</a>
+            <a href="/live-detection" class="btn btn-secondary">Try Demo</a>
+        </div>
+    </section>
+
+    {% include 'includes/footer.html' %}
+
+    <script src="{% static 'js/navbar_active.js' %}"></script>
+    <script src="{% static 'js/home.js' %}"></script>
+</body>
+</html>

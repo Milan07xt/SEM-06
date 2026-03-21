@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - Face Recognition Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <style>
+        .feedback-edit-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(10, 15, 35, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+        }
+
+        .feedback-edit-modal.active {
+            display: flex;
+        }
+
+        .feedback-edit-card {
+            width: min(560px, 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: linear-gradient(150deg, #1d254d 0%, #2d3769 100%);
+            color: #eef3ff;
+            box-shadow: 0 22px 54px rgba(5, 9, 22, 0.5);
+            padding: 20px;
+        }
+
+        .feedback-edit-title {
+            margin: 0 0 6px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .feedback-edit-subtitle {
+            margin: 0 0 16px;
+            color: rgba(238, 243, 255, 0.82);
+            font-size: 0.95rem;
+        }
+
+        .feedback-edit-field {
+            margin-bottom: 12px;
+        }
+
+        .feedback-edit-field label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: rgba(238, 243, 255, 0.92);
+        }
+
+        .feedback-edit-field input,
+        .feedback-edit-field textarea {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid rgba(168, 191, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 10px 12px;
+            font: inherit;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feedback-edit-field input::placeholder,
+        .feedback-edit-field textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .feedback-edit-field input:focus,
+        .feedback-edit-field textarea:focus {
+            border-color: #8fd6ff;
+            box-shadow: 0 0 0 3px rgba(143, 214, 255, 0.2);
+        }
+
+        .feedback-edit-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .feedback-modal-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .feedback-modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.16);
+            color: #f3f6ff;
+        }
+
+        .feedback-modal-btn.save {
+            background: linear-gradient(135deg, #70b8ff, #8de0ff);
+            color: #102442;
+        }
+
+        .feedback-modal-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.03);
+        }
+
+        .feedback-delete-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(12, 8, 18, 0.58);
+            backdrop-filter: blur(4px);
+            z-index: 3100;
+        }
+
+        .feedback-delete-modal.active {
+            display: flex;
+        }
+
+        .feedback-delete-card {
+            width: min(450px, 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 205, 215, 0.28);
+            background: linear-gradient(165deg, #2c1830 0%, #47203b 100%);
+            box-shadow: 0 24px 52px rgba(10, 3, 12, 0.55);
+            padding: 20px;
+            color: #ffeef4;
+        }
+
+        .feedback-delete-title {
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .feedback-delete-text {
+            margin: 0;
+            color: rgba(255, 238, 244, 0.86);
+            line-height: 1.55;
+            font-size: 0.96rem;
+        }
+
+        .feedback-delete-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .feedback-modal-btn.delete {
+            background: linear-gradient(135deg, #ff7a95, #ff5b7e);
+            color: #3d0815;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section style="margin-top: 90px; min-height: 60vh; padding: 40px 20px;">
+        <div style="max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.92); border-radius: 16px; padding: 30px; box-shadow: 0 10px 28px rgba(0,0,0,0.12);">
+            <h1 style="margin-bottom: 12px; color: #2c3e50;">Feedback</h1>
+            <p style="margin-bottom: 22px; color: #555;">We value your feedback! Tell us what is working well and what we can improve.</p>
+
+            <form id="feedback-form">
+                <label for="feedback-name" style="display:block; margin-bottom: 6px; font-weight: 600; color: #2c3e50;">Your Name</label>
+                <input id="feedback-name" type="text" placeholder="Enter your name" required style="width:100%; padding: 12px; border:1px solid #d8dbe8; border-radius: 10px; margin-bottom: 14px;">
+
+                <label for="feedback-email" style="display:block; margin-bottom: 6px; font-weight: 600; color: #2c3e50;">Email</label>
+                <input id="feedback-email" type="email" placeholder="Enter your email" required style="width:100%; padding: 12px; border:1px solid #d8dbe8; border-radius: 10px; margin-bottom: 14px;">
+
+                <label for="feedback-message" style="display:block; margin-bottom: 6px; font-weight: 600; color: #2c3e50;">Message</label>
+                <textarea id="feedback-message" rows="5" placeholder="Share your thoughts..." required style="width:100%; padding: 12px; border:1px solid #d8dbe8; border-radius: 10px; margin-bottom: 16px; resize: vertical;"></textarea>
+
+                <button id="feedback-submit-btn" type="submit" style="background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; border:none; padding: 11px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                    Submit Feedback
+                </button>
+
+                <p id="feedback-status" style="margin-top:12px; font-weight:600; color:#2c3e50;"></p>
+            </form>
+
+            <hr style="margin: 26px 0; border: none; border-top: 1px solid #d8dbe8;">
+
+            <div>
+                <h2 style="margin-bottom: 10px; color:#2c3e50; font-size: 1.3rem;">User Feedback List</h2>
+                <p style="margin-bottom: 16px; color:#555; font-size: 0.95rem;">You can edit or delete any feedback entry below.</p>
+
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse: collapse; background:#fff; border-radius: 10px; overflow:hidden;">
+                        <thead>
+                            <tr style="background:#f0f3ff;">
+                                <th style="text-align:left; padding:10px; border-bottom:1px solid #e6e9f7;">Name</th>
+                                <th style="text-align:left; padding:10px; border-bottom:1px solid #e6e9f7;">Email</th>
+                                <th style="text-align:left; padding:10px; border-bottom:1px solid #e6e9f7;">Message</th>
+                                <th style="text-align:left; padding:10px; border-bottom:1px solid #e6e9f7;">Time</th>
+                                <th style="text-align:left; padding:10px; border-bottom:1px solid #e6e9f7;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedback-table-body">
+                            <tr>
+                                <td colspan="5" style="padding:12px; color:#6b7280;">Loading feedback...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="feedback-edit-modal" class="feedback-edit-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-edit-title">
+        <div class="feedback-edit-card">
+            <h3 id="feedback-edit-title" class="feedback-edit-title">Edit Feedback</h3>
+            <p class="feedback-edit-subtitle">Update the details and click save.</p>
+
+            <form id="feedback-edit-form">
+                <input type="hidden" id="feedback-edit-id">
+
+                <div class="feedback-edit-field">
+                    <label for="feedback-edit-name">Name</label>
+                    <input id="feedback-edit-name" type="text" placeholder="Enter name" required>
+                </div>
+
+                <div class="feedback-edit-field">
+                    <label for="feedback-edit-email">Email</label>
+                    <input id="feedback-edit-email" type="email" placeholder="Enter email" required>
+                </div>
+
+                <div class="feedback-edit-field">
+                    <label for="feedback-edit-message">Message</label>
+                    <textarea id="feedback-edit-message" rows="4" placeholder="Update message" required></textarea>
+                </div>
+
+                <div class="feedback-edit-actions">
+                    <button id="feedback-edit-cancel" type="button" class="feedback-modal-btn cancel">Cancel</button>
+                    <button id="feedback-edit-save" type="submit" class="feedback-modal-btn save">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="feedback-delete-modal" class="feedback-delete-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-delete-title">
+        <div class="feedback-delete-card">
+            <h3 id="feedback-delete-title" class="feedback-delete-title">Delete Feedback?</h3>
+            <p class="feedback-delete-text">This action will permanently remove this feedback entry. This cannot be undone.</p>
+
+            <div class="feedback-delete-actions">
+                <button id="feedback-delete-cancel" type="button" class="feedback-modal-btn cancel">Cancel</button>
+                <button id="feedback-delete-confirm" type="button" class="feedback-modal-btn delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    {% include 'includes/footer.html' %}
+
+    <script src="{% static 'js/navbar_active.js' %}"></script>
+    <script>
+        (function () {
+            var form = document.getElementById('feedback-form');
+            var statusEl = document.getElementById('feedback-status');
+            var submitBtn = document.getElementById('feedback-submit-btn');
+            var tableBody = document.getElementById('feedback-table-body');
+            var editModal = document.getElementById('feedback-edit-modal');
+            var editForm = document.getElementById('feedback-edit-form');
+            var editIdEl = document.getElementById('feedback-edit-id');
+            var editNameEl = document.getElementById('feedback-edit-name');
+            var editEmailEl = document.getElementById('feedback-edit-email');
+            var editMessageEl = document.getElementById('feedback-edit-message');
+            var editCancelBtn = document.getElementById('feedback-edit-cancel');
+            var editSaveBtn = document.getElementById('feedback-edit-save');
+            var deleteModal = document.getElementById('feedback-delete-modal');
+            var deleteCancelBtn = document.getElementById('feedback-delete-cancel');
+            var deleteConfirmBtn = document.getElementById('feedback-delete-confirm');
+            var pendingDeleteId = 0;
+
+            if (!form || !statusEl || !submitBtn || !tableBody || !editModal || !editForm || !editIdEl || !editNameEl || !editEmailEl || !editMessageEl || !editCancelBtn || !editSaveBtn || !deleteModal || !deleteCancelBtn || !deleteConfirmBtn) {
+                return;
+            }
+
+            function openEditModal(payload) {
+                editIdEl.value = String(payload.id || '');
+                editNameEl.value = String(payload.name || '');
+                editEmailEl.value = String(payload.email || '');
+                editMessageEl.value = String(payload.message || '');
+                editModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(function () {
+                    editNameEl.focus();
+                }, 0);
+            }
+
+            function closeEditModal() {
+                editModal.classList.remove('active');
+                document.body.style.overflow = '';
+                editForm.reset();
+                editIdEl.value = '';
+                editSaveBtn.disabled = false;
+            }
+
+            function openDeleteModal(deleteId) {
+                pendingDeleteId = Number(deleteId || 0);
+                deleteModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(function () {
+                    deleteConfirmBtn.focus();
+                }, 0);
+            }
+
+            function closeDeleteModal() {
+                deleteModal.classList.remove('active');
+                pendingDeleteId = 0;
+                if (!editModal.classList.contains('active')) {
+                    document.body.style.overflow = '';
+                }
+                deleteConfirmBtn.disabled = false;
+            }
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function formatCreatedAt(value) {
+                if (!value) {
+                    return '-';
+                }
+                var date = new Date(value);
+                if (isNaN(date.getTime())) {
+                    return value;
+                }
+                return date.toLocaleString();
+            }
+
+            function renderFeedbackRows(items) {
+                if (!Array.isArray(items) || items.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="padding:12px; color:#6b7280;">No feedback submitted yet.</td></tr>';
+                    return;
+                }
+
+                var rowsHtml = items.map(function (item) {
+                    return (
+                        '<tr data-feedback-id="' + item.id + '">' +
+                            '<td style="padding:10px; border-bottom:1px solid #f1f3fb;">' + escapeHtml(item.name) + '</td>' +
+                            '<td style="padding:10px; border-bottom:1px solid #f1f3fb;">' + escapeHtml(item.email) + '</td>' +
+                            '<td style="padding:10px; border-bottom:1px solid #f1f3fb; max-width:280px;">' + escapeHtml(item.message) + '</td>' +
+                            '<td style="padding:10px; border-bottom:1px solid #f1f3fb; white-space:nowrap;">' + escapeHtml(formatCreatedAt(item.created_at)) + '</td>' +
+                            '<td style="padding:10px; border-bottom:1px solid #f1f3fb; white-space:nowrap;">' +
+                                '<button type="button" class="feedback-edit-btn" data-id="' + item.id + '" data-name="' + escapeHtml(item.name) + '" data-email="' + escapeHtml(item.email) + '" data-message="' + escapeHtml(item.message) + '" style="margin-right:8px; background:#4f46e5; color:#fff; border:none; border-radius:8px; padding:6px 10px; cursor:pointer;">Edit</button>' +
+                                '<button type="button" class="feedback-delete-btn" data-id="' + item.id + '" style="background:#dc2626; color:#fff; border:none; border-radius:8px; padding:6px 10px; cursor:pointer;">Delete</button>' +
+                            '</td>' +
+                        '</tr>'
+                    );
+                }).join('');
+
+                tableBody.innerHTML = rowsHtml;
+            }
+
+            async function loadFeedbackList() {
+                try {
+                    var response = await fetch('/api/feedback_list');
+                    var result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Unable to load feedback list.');
+                    }
+                    renderFeedbackRows(result.items || []);
+                } catch (error) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="padding:12px; color:#c0392b;">' +
+                        escapeHtml(error && error.message ? error.message : 'Unable to load feedback list.') +
+                        '</td></tr>';
+                }
+            }
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                var name = (document.getElementById('feedback-name') || {}).value || '';
+                var email = (document.getElementById('feedback-email') || {}).value || '';
+                var message = (document.getElementById('feedback-message') || {}).value || '';
+
+                statusEl.textContent = 'Submitting feedback...';
+                statusEl.style.color = '#2c3e50';
+                submitBtn.disabled = true;
+
+                try {
+                    var response = await fetch('/api/submit_feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: name.trim(),
+                            email: email.trim(),
+                            message: message.trim()
+                        })
+                    });
+
+                    var result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Failed to submit feedback.');
+                    }
+
+                    statusEl.textContent = '✅ Feedback saved successfully in attendance.db';
+                    statusEl.style.color = '#1f8b4c';
+                    form.reset();
+                    await loadFeedbackList();
+                } catch (error) {
+                    statusEl.textContent = '❌ ' + (error && error.message ? error.message : 'Unable to submit feedback.');
+                    statusEl.style.color = '#c0392b';
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+
+            tableBody.addEventListener('click', async function (event) {
+                var editBtn = event.target.closest('.feedback-edit-btn');
+                if (editBtn) {
+                    openEditModal({
+                        id: Number(editBtn.getAttribute('data-id') || 0),
+                        name: editBtn.getAttribute('data-name') || '',
+                        email: editBtn.getAttribute('data-email') || '',
+                        message: editBtn.getAttribute('data-message') || ''
+                    });
+                    return;
+                }
+
+                var deleteBtn = event.target.closest('.feedback-delete-btn');
+                if (deleteBtn) {
+                    var deleteId = Number(deleteBtn.getAttribute('data-id') || 0);
+                    openDeleteModal(deleteId);
+                }
+            });
+
+            editForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                var editId = Number(editIdEl.value || 0);
+                var nextName = String(editNameEl.value || '').trim();
+                var nextEmail = String(editEmailEl.value || '').trim();
+                var nextMessage = String(editMessageEl.value || '').trim();
+
+                statusEl.textContent = 'Updating feedback...';
+                statusEl.style.color = '#2c3e50';
+                editSaveBtn.disabled = true;
+
+                try {
+                    var updateResponse = await fetch('/api/feedback_update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: editId,
+                            name: nextName,
+                            email: nextEmail,
+                            message: nextMessage
+                        })
+                    });
+
+                    var updateResult = await updateResponse.json();
+                    if (!updateResponse.ok || !updateResult.success) {
+                        throw new Error(updateResult.message || 'Unable to update feedback.');
+                    }
+
+                    closeEditModal();
+                    statusEl.textContent = '✅ Feedback updated successfully.';
+                    statusEl.style.color = '#1f8b4c';
+                    await loadFeedbackList();
+                } catch (error) {
+                    editSaveBtn.disabled = false;
+                    statusEl.textContent = '❌ ' + (error && error.message ? error.message : 'Unable to update feedback.');
+                    statusEl.style.color = '#c0392b';
+                }
+            });
+
+            editCancelBtn.addEventListener('click', function () {
+                closeEditModal();
+            });
+
+            editModal.addEventListener('click', function (event) {
+                if (event.target === editModal) {
+                    closeEditModal();
+                }
+            });
+
+            deleteCancelBtn.addEventListener('click', function () {
+                closeDeleteModal();
+            });
+
+            deleteModal.addEventListener('click', function (event) {
+                if (event.target === deleteModal) {
+                    closeDeleteModal();
+                }
+            });
+
+            deleteConfirmBtn.addEventListener('click', async function () {
+                if (!pendingDeleteId) {
+                    closeDeleteModal();
+                    return;
+                }
+
+                statusEl.textContent = 'Deleting feedback...';
+                statusEl.style.color = '#2c3e50';
+                deleteConfirmBtn.disabled = true;
+
+                try {
+                    var deleteResponse = await fetch('/api/feedback_delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: pendingDeleteId })
+                    });
+
+                    var deleteResult = await deleteResponse.json();
+                    if (!deleteResponse.ok || !deleteResult.success) {
+                        throw new Error(deleteResult.message || 'Unable to delete feedback.');
+                    }
+
+                    closeDeleteModal();
+                    statusEl.textContent = '✅ Feedback deleted successfully.';
+                    statusEl.style.color = '#1f8b4c';
+                    await loadFeedbackList();
+                } catch (error) {
+                    deleteConfirmBtn.disabled = false;
+                    statusEl.textContent = '❌ ' + (error && error.message ? error.message : 'Unable to delete feedback.');
+                    statusEl.style.color = '#c0392b';
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && editModal.classList.contains('active')) {
+                    closeEditModal();
+                    return;
+                }
+                if (event.key === 'Escape' && deleteModal.classList.contains('active')) {
+                    closeDeleteModal();
+                }
+            });
+
+            loadFeedbackList();
+        })();
+    </script>
+</body>
+</html>

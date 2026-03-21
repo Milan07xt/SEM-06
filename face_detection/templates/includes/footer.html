@@ -1,0 +1,41 @@
+{% load static %}
+
+<footer class="global-site-footer">
+    <link rel="stylesheet" href="{% static 'css/footer_stylish.css' %}">
+    <div class="footer-wrap">
+        <div class="footer-col">
+            <h4>About Us</h4>
+            <p>Advanced face recognition attendance system for modern organizations.</p>
+            <a href="{% url 'face_detection:about_us' %}">Learn More About Us</a>
+            <a href="{% url 'face_detection:our_team' %}">Meet Our Team</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <a href="/mark-attendance/">Mark Attendance</a>
+            <a href="/register/">Register</a>
+            <a href="/attendance_record/">Records</a>
+            <a href="{% url 'face_detection:about_us' %}">About Us</a>
+        </div>
+
+        <div class="footer-col">
+            <h4>Support</h4>
+            <a href="{% url 'face_detection:help_center' %}">Help Center</a>
+            <a href="{% url 'face_detection:faq' %}">FAQ</a>
+            <a href="{% url 'face_detection:feedback' %}">Feedback</a>
+            <a href="{% url 'face_detection:contact_us' %}">Contact Us</a>
+        </div>
+    </div>
+
+    <div class="footer-bottom-line"></div>
+    <p class="footer-copyright">&copy; <span id="global-footer-year">2026</span> Face Recognition Attendance System. All rights reserved.</p>
+</footer>
+
+<script>
+    (function () {
+        var yearEl = document.getElementById('global-footer-year');
+        if (yearEl) {
+            yearEl.textContent = new Date().getFullYear();
+        }
+    })();
+</script>

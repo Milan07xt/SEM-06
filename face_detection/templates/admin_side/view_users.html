@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View All Users - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Administrator Dashboard</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime">3/1/2026, 2:51:09 pm</div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="dashboard-top-nav">
+                <div class="sidebar-nav">
+                    <button onclick="location.href='/admin_dashboard/'" class="sidebar-nav-btn active">
+                        <span class="icon">📊</span> Dashboard
+                    </button>
+                    <button onclick="location.href='/mark_attendance/'" class="sidebar-nav-btn">
+                        <span class="icon">✓</span> Mark Attendance
+                    </button>
+                    <button onclick="location.href='/register_user/'" class="sidebar-nav-btn">
+                        <span class="icon">📸</span> Register User
+                    </button>
+                    <button onclick="location.href='/view_user/'" class="sidebar-nav-btn">
+                        <span class="icon">👥</span> Users
+                    </button>
+                    <button onclick="location.href='/attendance_records/'" class="sidebar-nav-btn">
+                        <span class="icon">📋</span> Records
+                    </button>
+                    <button onclick="location.href='/settings/'" class="sidebar-nav-btn">
+                        <span class="icon">⚙️</span> Settings
+                    </button>
+                </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="admin-card">
+        <h2>👥 View All Users</h2>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Search Bar -->
+        <div class="form-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by name...">
+        </div>
+
+        <!-- User Stats -->
+        <div class="system-info" style="margin-bottom: 20px;">
+            <div class="info-item">
+                <div class="info-label">Total Users:</div>
+                <div class="info-value" id="totalUsers">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Active Today:</div>
+                <div class="info-value status-running" id="activeToday">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Last Registered:</div>
+                <div class="info-value" id="lastRegistered">-</div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div id="usersTable">
+            <p style="text-align: center; color: #94a3b8; padding: 20px;">Loading users...</p>
+        </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/admin_dashboard'">← Back to Home</button>
+        <button class="btn btn-success" onclick="location.href='/register_user/'">➕ Add New User</button>
+        <button class="btn btn-danger" onclick="logout()">🔓 Logout</button>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚠️ Confirm Delete</h3>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete user "<span id="deleteUserName"></span>"?</p>
+                <p style="color: #ef4444; margin-top: 10px;">This action cannot be undone!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Details Modal -->
+    <div class="modal-overlay" id="viewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewModalTitle">👤 User Details</h3>
+            </div>
+            <div class="modal-body" id="viewUserDetailsContent"></div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="viewDeleteBtn" style="display:none;">🗑️ Delete User Data</button>
+                <button class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    {% include 'includes/footer.html' %}
+
+    <script src="{% static 'view_users.js' %}"></script>
+</body>
+</html>

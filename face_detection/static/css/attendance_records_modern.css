@@ -1,0 +1,178 @@
+/* Attendance Records Page - Modern Theme (Teal + Violet) */
+
+:root {
+    --records-primary: #0f766e;
+    --records-primary-2: #0e7490;
+    --records-accent: #7c3aed;
+    --records-bg-1: #0f172a;
+    --records-bg-2: #1e293b;
+    --records-surface: rgba(255, 255, 255, 0.9);
+}
+
+body {
+    background: linear-gradient(135deg, var(--records-bg-1) 0%, var(--records-bg-2) 45%, #4c1d95 100%) !important;
+}
+
+.admin-header {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.96), rgba(124, 58, 237, 0.96)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.dashboard-top-nav {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.92), rgba(76, 29, 149, 0.9)) !important;
+}
+
+.sidebar-nav .sidebar-nav-btn {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(148, 163, 184, 0.35) !important;
+    color: #e2e8f0 !important;
+}
+
+.sidebar-nav .sidebar-nav-btn:hover,
+.sidebar-nav .sidebar-nav-btn.active {
+    background: linear-gradient(135deg, var(--records-primary), var(--records-accent)) !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+    color: #ffffff !important;
+}
+
+.admin-card {
+    background: var(--records-surface) !important;
+    border: 1px solid rgba(15, 118, 110, 0.28);
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.32);
+    backdrop-filter: blur(8px);
+}
+
+.admin-card h2 {
+    color: #0f766e !important;
+}
+
+#recordsTable {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(15, 118, 110, 0.28);
+    border-radius: 14px !important;
+}
+
+#recordsTable .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 860px;
+}
+
+#recordsTable .data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, var(--records-primary), var(--records-accent));
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+#recordsTable .data-table thead th:first-child {
+    border-top-left-radius: 12px;
+}
+
+#recordsTable .data-table thead th:last-child {
+    border-top-right-radius: 12px;
+}
+
+#recordsTable .data-table tbody td {
+    padding: 11px 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    color: #334155;
+    font-size: 0.92rem;
+    background: rgba(255, 255, 255, 0.78);
+}
+
+#recordsTable .data-table tbody tr:nth-child(even) td {
+    background: rgba(248, 250, 252, 0.92);
+}
+
+#recordsTable .data-table tbody tr:hover td {
+    background: rgba(204, 251, 241, 0.7);
+    transition: background 0.2s ease;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 84px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+}
+
+.status-present { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+.status-absent { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.status-late { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.status-excused { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 5px 9px;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+}
+
+.action-buttons .btn-edit {
+    background: linear-gradient(135deg, #0ea5e9, #0369a1);
+}
+
+.action-buttons .btn-delete {
+    background: linear-gradient(135deg, #fb7185, #e11d48);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0f766e, #0e7490) !important;
+    border: none !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #14b8a6, #0f766e) !important;
+    border: none !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #f43f5e, #be123c) !important;
+    border: none !important;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 28px;
+    color: #64748b;
+}
+
+.empty-state-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 900px) {
+    .admin-card {
+        margin: 14px;
+        padding: 14px;
+    }
+
+    #recordsTable .data-table {
+        min-width: 700px;
+    }
+}

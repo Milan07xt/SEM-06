@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Records - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'admin_side/admin_style.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Administrator Dashboard</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime"></div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-nav">
+        <button class="nav-tab" onclick="location.href='/admin_dashboard'">📊 Overview</button>
+        <button class="nav-tab" onclick="location.href='/admin/mark_attendance'">✓ Mark Attendance</button>
+        <button class="nav-tab" onclick="location.href='/admin/register'">📸 Register Face</button>
+        <button class="nav-tab" onclick="location.href='/admin/view_users'">👥 Users</button>
+        <button class="nav-tab active">📋 Records</button>
+        <button class="nav-tab" onclick="location.href='/admin/settings'">⚙️ Settings</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-card">
+        <h2>📋 Attendance Records</h2>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Filters -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="filterDate">Date:</label>
+                <input type="date" id="filterDate" class="form-control">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="filterUser">User:</label>
+                <select id="filterUser" class="form-control">
+                    <option value="">All Users</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="filterStatus">Status:</label>
+                <select id="filterStatus" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="applyFilters()" style="width: 100%;">🔍 Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="system-info" style="margin-bottom: 20px;">
+            <div class="info-item">
+                <div class="info-label">Total Records:</div>
+                <div class="info-value" id="totalRecords">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Present:</div>
+                <div class="info-value status-running" id="presentCount">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Absent:</div>
+                <div class="info-value" style="color: #ef4444;" id="absentCount">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Attendance Rate:</div>
+                <div class="info-value" id="attendanceRate">0%</div>
+            </div>
+        </div>
+
+        <!-- Records Table -->
+        <div id="recordsTable" style="overflow-x: auto; border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f9fafb; color: #111;">
+                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e5e7eb;">User</th>
+                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e5e7eb;">Date & Time</th>
+                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e5e7eb;">Status</th>
+                        <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e5e7eb;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                    {% for record in attendance_records %}
+                                        {% if record.status == "Present" or record.status == "Absent" %}
+                                            <tr>
+                                                <td>{{ record.name }}</td>
+                                                <td>{{ record.timestamp }}</td>
+                                                <td>
+                                                    {% if record.status == "Present" %}
+                                                        <span class="status-present">Present</span>
+                                                    {% elif record.status == "Absent" %}
+                                                        <span class="status-absent">Absent</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <button class="action-btn action-edit">✏️ Edit</button>
+                                                    <button class="action-btn action-delete">🗑️ Delete</button>
+                                                    <span class="admin-only-label">Admin only</span>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="btn-group" style="margin-top: 20px;">
+            <button class="btn btn-success" onclick="exportToCSV()">📊 Export to CSV</button>
+            <button class="btn btn-primary" onclick="exportToExcel()">📈 Export to Excel</button>
+            <button class="btn btn-secondary" onclick="printRecords()">🖨️ Print</button>
+        </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/admin_dashboard'">← Back to Home</button>
+        <button class="btn btn-danger" onclick="logout()">🔓 Logout</button>
+    </div>
+
+    <script src="{% static 'admin_side/attendance_records.js' %}"></script>
+    <script>
+        document.getElementById('adminUsername').textContent = localStorage.getItem('adminUsername') || 'Admin';
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        function applyFilters() {
+            alert('Filters functionality coming soon');
+        }
+        function exportToCSV() {
+            alert('Export to CSV coming soon');
+        }
+        function exportToExcel() {
+            alert('Export to Excel coming soon');
+        }
+        function printRecords() {
+            window.print();
+        }
+        function logout() {
+            if(confirm('Are you sure?')) {
+                localStorage.removeItem('adminUsername');
+                location.href = '/admin_login';
+            }
+        }
+    </script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

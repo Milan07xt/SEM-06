@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Face Recognition Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <style>
+        .contact-page {
+            min-height: calc(100vh - 220px);
+            padding: 48px 24px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+        }
+
+        .contact-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(44, 47, 74, 0.12);
+            padding: 36px;
+        }
+
+        .contact-title {
+            margin: 0 0 8px;
+            color: #2c2f4a;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .contact-subtitle {
+            margin: 0 0 28px;
+            color: #596080;
+            text-align: center;
+            font-size: 1.05rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .contact-card {
+            border: 1px solid #e8ebf7;
+            border-radius: 12px;
+            padding: 18px;
+            background: #fafbff;
+        }
+
+        .contact-card h3 {
+            margin: 0 0 8px;
+            color: #2c2f4a;
+            font-size: 1.1rem;
+        }
+
+        .contact-card p,
+        .contact-card a {
+            margin: 0;
+            color: #4c5577;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .contact-card a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            display: inline-block;
+            margin-top: 24px;
+            color: #2c2f4a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-home:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .contact-container {
+                padding: 24px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="contact-page">
+        <section class="contact-container">
+            <h1 class="contact-title">Contact Us</h1>
+            <p class="contact-subtitle">Need help with attendance, registration, or admin settings? We are happy to assist.</p>
+
+            <div class="contact-grid">
+                <article class="contact-card">
+                    <h3>📧 Email Support</h3>
+                    <p><a href="mailto:rathodmilan216@gmail.com">rathodmilan216@gmail.com</a></p>
+                    <p><a href="mailto:dafdamanish8@gmail.com">dafdamanish8@gmail.com</a></p>
+                    <p><a href="mailto:niharlashakri111@gmail.com">niharlashakri111@gmail.com</a></p>
+                </article>
+
+                <article class="contact-card">
+                    <h3>📞 Phone</h3>
+                    <p><a href="tel:+919327599254">+91 93275 99254</a></p>
+                  <p><a href="tel:+9163544 39465">+91 63544 39465</a></p>
+                </article>
+
+                <article class="contact-card">
+                    <h3>🏢 Office</h3>
+                    <p>Face Detection Team<br>Smart Campus Block, India</p>
+                </article>
+
+                <article class="contact-card">
+                    <h3>🕒 Support Hours</h3>
+                    <p>Monday - Friday<br>9:00 AM - 6:00 PM</p>
+                </article>
+            </div>
+
+            <a class="back-home" href="/">← Back to Home</a>
+        </section>
+    </main>
+
+    {% include 'includes/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Face Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_profile.css' %}">
+</head>
+<body class="profile-theme">
+    <div class="container">
+        <header>
+            <h1>Face Detection Attendance System</h1>
+            <nav>
+                <ul>
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li><a href="/user_dashboard" class="nav-link">My Dashboard</a></li>
+                    <li><a href="/user_profile" class="nav-link active">My Profile</a></li>
+                    <li><span class="user-welcome">Welcome, <span id="userDisplayName">User</span></span></li>
+                    <li><button id="logoutBtn" class="btn btn-danger btn-sm">Logout</button></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="content">
+                <section class="profile-section">
+                    <div class="my-profile-header">
+                        <span class="icon-circle">👤</span>
+                        <h1>My Profile</h1>
+                    </div>
+
+                    <div class="futuristic-form card-lift profile-container neon-form-bg">
+                        <div class="profile-header card-hover">
+                            <div class="profile-avatar">
+                                <div class="avatar-placeholder">
+                                    <span id="avatarInitials">U</span>
+                                </div>
+                                <button id="updatePhotoBtn" class="btn btn-secondary btn-sm">Update Face Photo</button>
+                            </div>
+                            <div class="profile-info-summary">
+                                <h3 id="profileName" class="gradient-text">Loading...</h3>
+                                <p id="profileUsername">@username</p>
+                                <p id="profileRole">Student/Employee</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-details futuristic-form card-hover" style="padding: 20px;">
+                            <div class="form-section-header">
+                                <span class="icon-circle">📋</span>
+                                <h2>Personal Information</h2>
+                            </div>
+                            <form id="profileForm">
+                                <div class="form-row">
+                                    <div class="form-group futuristic-input-group input-glow">
+                                        <label for="fullName">Full Name</label>
+                                        <input type="text" id="fullName" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group futuristic-input-group input-glow">
+                                        <label for="username">Username</label>
+                                        <input type="text" id="username" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group futuristic-input-group input-glow">
+                                        <label for="rollNumber">Roll Number</label>
+                                        <input type="text" id="rollNumber" class="form-control">
+                                    </div>
+                                    <div class="form-group futuristic-input-group input-glow">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group futuristic-input-group input-glow">
+                                        <label for="phone">Phone</label>
+                                        <input type="tel" id="phone" class="form-control">
+                                    </div>
+                                    <div class="form-group futuristic-input-group input-glow">
+                                        <label for="registeredDate">Registered Date</label>
+                                        <input type="text" id="registeredDate" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="button-group-futuristic">
+                                    <button type="submit" class="futuristic-button">💾 Save Changes</button>
+                                    <button type="button" id="cancelBtn" class="futuristic-button secondary">❌ Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="profile-stats">
+                            <div class="form-section-header">
+                                <span class="icon-circle">📊</span>
+                                <h2>Quick Stats</h2>
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-item futuristic-stat-card">
+                                    <div class="stat-icon-box futuristic-stat-icon">📅</div>
+                                    <div class="stat-info">
+                                        <p class="futuristic-stat-value" id="totalDays">0</p>
+                                        <p class="futuristic-stat-label">Total Days Present</p>
+                                    </div>
+                                </div>
+                                <div class="stat-item futuristic-stat-card">
+                                    <div class="stat-icon-box futuristic-stat-icon">🎯</div>
+                                    <div class="stat-info">
+                                        <p class="futuristic-stat-value" id="attendancePercentage">0%</p>
+                                        <p class="futuristic-stat-label">Attendance Rate</p>
+                                    </div>
+                                </div>
+                                <div class="stat-item futuristic-stat-card">
+                                    <div class="stat-icon-box futuristic-stat-icon">⏰</div>
+                                    <div class="stat-info">
+                                        <p class="futuristic-stat-value" id="lastCheckin">-</p>
+                                        <p class="futuristic-stat-label">Last Check-in</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="profileStatus" class="status-message"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Update Photo Modal -->
+    <div id="updatePhotoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>📸 Update Face Photo</h3>
+            <div class="camera-container">
+                <video id="profileVideo" class="video-feed" autoplay muted playsinline></video>
+                <canvas id="profileCanvas" class="hidden-canvas"></canvas>
+            </div>
+            <div class="captured-preview" id="capturedPreview"></div>
+            <div class="modal-actions">
+                <button id="startCameraBtn" class="btn btn-secondary">Start Camera</button>
+                <button id="capturePhotoBtn" class="btn btn-primary" disabled>Capture Photo</button>
+                <button id="uploadPhotoBtn" class="btn btn-success" disabled>Upload Photo</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/user_profile.js' %}"></script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

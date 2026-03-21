@@ -1,0 +1,9 @@
+{
+    "html.validate.scripts": false,
+    "html.validate.styles": false,
+    "python.defaultInterpreterPath": "C:/Users/ABC/AppData/Local/Programs/Python/Python310/python.exe",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none",
+        "reportMissingModuleSource": "none"
+    }
+}

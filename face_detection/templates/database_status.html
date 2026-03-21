@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Status</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="{% url 'face_detection:index' %}" class="nav-link">Home</a>
+                <a href="{% url 'face_detection:live_detection' %}" class="nav-link active">Mark Attendance</a>
+                <a href="{% url 'face_detection:register' %}" class="nav-link">Register</a>
+                <a href="{% url 'face_detection:attendance_record' %}" class="nav-link">Records</a>
+                <a href="{% url 'face_detection:login' %}" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <main>
+            <div class="content">
+                <section class="dashboard-section">
+                    <h2>Database Overview</h2>
+
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon">🗂️</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Database Path</p>
+                                <p class="stat-value" id="dbPath" style="font-size:1.1rem; word-break: break-all;">-</p>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'face_detection:admin_login' %}" style="text-decoration: none; color: inherit;">
+                            <div class="stat-card clickable">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-content">
+                                    <p class="stat-label">Total Users</p>
+                                    <p class="stat-value" id="dbTotalUsers">-</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Total Records</p>
+                                <p class="stat-value" id="dbTotalRecords">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <h3>Quick Checks</h3>
+                        <div class="activity-list" id="dbChecks">
+                            <p class="text-center">Running checks...</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <h3>Actions</h3>
+                        <div class="action-buttons">
+                            <a href="{% url 'face_detection:dashboard' %}" class="action-btn">
+                                <span class="action-icon">⬅️</span>
+                                <span class="action-text">Back to Dashboard</span>
+                            </a>
+                            <a href="{% url 'face_detection:attendance_record' %}" class="action-btn">
+                                <span class="action-icon">📋</span>
+                                <span class="action-text">View Records</span>
+                            </a>
+                            <a href="{% url 'face_detection:register' %}" class="action-btn">
+                                <span class="action-icon">➕</span>
+                                <span class="action-text">Add User</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="dbStatusMessage" class="status-message"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/navbar_active.js' %}"></script>
+    <script>
+        async function loadDbStatus() {
+            const statusEl = document.getElementById('dbStatusMessage');
+            const checksEl = document.getElementById('dbChecks');
+            try {
+                statusEl.textContent = 'Loading database status...';
+                statusEl.className = 'status-message show info';
+
+                const res = await fetch('/api/database_status');
+                const data = await res.json();
+
+                if (!data.success) {
+                    statusEl.textContent = 'Failed to load database stats: ' + data.message;
+                    statusEl.className = 'status-message show error';
+                    return;
+                }
+
+                const totalUsers = data.registered_users ?? 0;
+                const totalRecords = data.attendance_records ?? 0;
+                const dbPath = data.database_location || '-';
+                const dbStatus = 'Connected';
+
+                document.getElementById('dbTotalUsers').textContent = totalUsers;
+                document.getElementById('dbTotalRecords').textContent = totalRecords;
+                document.getElementById('dbPath').textContent = dbPath;
+
+                const items = [
+                    { label: 'Database Status', value: dbStatus, ok: true },
+                    { label: 'Database Path', value: dbPath },
+                    { label: 'Total Users', value: totalUsers },
+                    { label: 'Total Records', value: totalRecords },
+                    { label: 'Last Updated (server time)', value: new Date().toLocaleString() }
+                ];
+
+                checksEl.innerHTML = '';
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'activity-item';
+                    div.innerHTML = `<div class="activity-name">${item.label}</div><div class="activity-time">${item.value}</div>`;
+                    checksEl.appendChild(div);
+                });
+
+                statusEl.textContent = 'Database status loaded successfully';
+                statusEl.className = 'status-message show success';
+            } catch (err) {
+                statusEl.textContent = 'Error loading database status: ' + err.message;
+                statusEl.className = 'status-message show error';
+                checksEl.innerHTML = '<p class="text-center">Unable to fetch database info.</p>';
+            }
+
+            setTimeout(() => statusEl.classList.remove('show'), 4000);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDbStatus);
+    </script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

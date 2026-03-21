@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-theme">
+ <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link active">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <main>
+            <div class="content">
+                <section class="dashboard-section">
+                    <h2>Dashboard Overview</h2>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-container">
+                        <a href="{% url 'face_detection:admin_login' %}" class="stat-card stat-card-link" aria-label="Go to admin login">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Registered Users</p>
+                                <p class="stat-value" id="totalUsers">0</p>
+                            </div>
+                        </a>
+
+                        <a href="/attendance_record?filter=today" class="stat-card stat-card-link" aria-label="View today's attendance details">
+                            <div class="stat-icon">✓</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Today's Attendance</p>
+                                <p class="stat-value" id="todayAttendance">0</p>
+                            </div>
+                        </a>
+
+                        <a href="/attendance_record" class="stat-card stat-card-link" aria-label="View all attendance records">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Total Records</p>
+                                <p class="stat-value" id="totalRecords">0</p>
+                            </div>
+                        </a>
+
+                        <a href="/database_status" class="stat-card stat-card-link" aria-label="View database status">
+                            <div class="stat-icon">⚙️</div>
+                            <div class="stat-content">
+                                <p class="stat-label">System Status</p>
+                                <p class="stat-value status-active">Active</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-container">
+                        <div class="chart-box">
+                            <h3>Attendance Trend (Last 7 Days)</h3>
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+
+                        <div class="chart-box">
+                            <h3>Attendance Status</h3>
+                            <div class="status-list">
+                                <div class="status-item">
+                                    <span class="status-dot present"></span>
+                                    <span class="status-label">Present</span>
+                                    <span class="status-count" id="presentCount">0</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-dot absent"></span>
+                                    <span class="status-label">Absent</span>
+                                    <span class="status-count" id="absentCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="recent-activity">
+                        <h3>Recent Attendance Activity</h3>
+                        <div class="activity-list" id="activityList">
+                            <p class="text-center">Loading activity...</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="action-buttons">
+                            <a href="/" class="action-btn">
+                                <span class="action-icon">📸</span>
+                                <span class="action-text">Mark Attendance</span>
+                            </a>
+                            <a href="/register" class="action-btn">
+                                <span class="action-icon">➕</span>
+                                <span class="action-text">Register New Face</span>
+                            </a>
+                            <a href="/attendance_record" class="action-btn">
+                                <span class="action-icon">📋</span>
+                                <span class="action-text">View Records</span>
+                            </a>
+                            <button id="refreshBtn" class="action-btn">
+                                <span class="action-icon">🔄</span>
+                                <span class="action-text">Refresh Data</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="dashboardStatus" class="status-message"></div>
+                </section>
+            </div>
+        </main>
+
+    </div>
+
+    <script src="{% static 'js/navbar_active.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

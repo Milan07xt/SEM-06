@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup Details - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+    <style>
+        .backup-block {
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .backup-block h4 {
+            margin: 0 0 6px;
+            color: #2b2f55;
+            font-weight: 700;
+        }
+
+        .backup-block p {
+            margin: 0 0 12px;
+            color: #4c5678;
+            font-weight: 500;
+        }
+
+        #backupFile {
+            color: #253255;
+            background: #ffffff;
+            border: 1px solid #7fdcff;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        #backupFile::file-selector-button {
+            background: linear-gradient(135deg, #6a8dff, #7f5dff);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 12px;
+            margin-right: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Backup Details</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime"></div>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>📦 Backup & Restore Details</h2>
+
+        <div style="display: grid; gap: 16px; margin-top: 18px;">
+            <div class="backup-block">
+                <h4>📥 Backup Database</h4>
+                <p>Download a backup of attendance data and user metadata.</p>
+                <button class="btn btn-primary" onclick="backupDatabase()">📥 Download Backup</button>
+            </div>
+
+            <div class="backup-block">
+                <h4>🔄 Restore from Backup</h4>
+                <p>Restore your data from an exported backup file.</p>
+                <input type="file" id="backupFile" class="form-control" accept=".db,.zip,.csv" style="margin-bottom: 10px;">
+                <button class="btn btn-warning" onclick="restoreDatabase()">🔄 Restore Backup</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/settings/'">← Back to Settings</button>
+        <button class="btn btn-secondary" onclick="location.href='/admin_dashboard/'">🏠 Dashboard</button>
+    </div>
+
+    <script>
+        document.getElementById('adminUsername').textContent = localStorage.getItem('adminUsername') || 'Admin';
+
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        function backupDatabase() {
+            alert('Database backup initiated. Your backup will download shortly...');
+        }
+
+        function restoreDatabase() {
+            const file = document.getElementById('backupFile').files[0];
+            if (!file) {
+                alert('Please select a backup file');
+                return;
+            }
+            alert('Restoring backup... This will take a few moments.');
+        }
+    </script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

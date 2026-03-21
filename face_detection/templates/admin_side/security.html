@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Details - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+</head>
+<body>
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Security Details</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime"></div>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>🔒 Security Details</h2>
+
+        <div style="display: grid; gap: 20px; margin-top: 16px;">
+            <div class="form-group">
+                <label>Change Admin Password</label>
+                <input type="password" class="form-control" id="newPassword" placeholder="New password">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password">
+            </div>
+            <button class="btn btn-success" onclick="changePassword()">🔐 Update Password</button>
+        </div>
+
+        <hr style="margin: 30px 0;">
+
+        <div>
+            <h4>Session Management</h4>
+            <p>Current Session: <strong id="sessionInfo">Active</strong></p>
+            <button class="btn btn-danger" onclick="logout()">🔓 Logout All Sessions</button>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/settings/'">← Back to Settings</button>
+        <button class="btn btn-secondary" onclick="location.href='/admin_dashboard/'">🏠 Dashboard</button>
+    </div>
+
+    <script>
+        document.getElementById('adminUsername').textContent = localStorage.getItem('adminUsername') || 'Admin';
+
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            if (!newPass || !confirmPass) {
+                alert('Please fill in all fields');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                alert('Passwords do not match');
+                return;
+            }
+            alert('Password changed successfully!');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        function logout() {
+            if (confirm('Are you sure? This will logout all admin sessions.')) {
+                localStorage.removeItem('adminUsername');
+                location.href = '/admin_login/';
+            }
+        }
+    </script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

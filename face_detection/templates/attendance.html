@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Record - Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/attendance_record_stylish.css' %}?v=20260305-1">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link active">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <main>
+            <div class="content">
+                <section class="attendance-record-section">
+                    <h2>Attendance Records</h2>
+                    <div id="filterNotice" class="filter-notice" role="status" aria-live="polite"></div>
+
+                    <div class="controls">
+                        <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+                        <button id="exportBtn" class="btn export-btn">Export as CSV</button>
+                    </div>
+
+                    <div id="tableContainer" class="table-container">
+                        <table id="attendanceTable" class="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Timestamp</th>
+                                    <th>Status</th>
+                                    <th>Subject</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="recordStatus" class="status-message"></div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Edit Status Modal -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <h3>Edit Status for <span id="editPersonName"></span></h3>
+                <p>Current: <strong id="editCurrentStatus"></strong></p>
+                <label for="statusSelect">Select new status:</label>
+                <select id="statusSelect" class="status-select">
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Leave">Leave</option>
+                </select>
+                <div class="modal-buttons">
+                    <button id="modalOkBtn" class="btn btn-primary">OK</button>
+                    <button id="modalCancelBtn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Dialog Modal -->
+        <div id="errorDialog" class="modal error-dialog">
+            <div class="modal-content error-modal">
+                <div class="error-header">
+                    <span class="error-icon">⚠️</span>
+                    <h3 id="errorDialogTitle">Error</h3>
+                </div>
+                <p id="errorDialogMessage"></p>
+                <div class="modal-buttons">
+                    <button id="errorDialogLoginBtn" class="btn btn-secondary" style="display:none;">Admin Login</button>
+                    <button id="errorDialogBtn" class="btn btn-primary">OK</button>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+
+    <!-- Cache-bust to ensure latest JS is loaded -->
+    <script src="{% static 'js/navbar_active.js' %}"></script>
+    <script src="{% static 'js/attendance.js' %}?v=20260312-6"></script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

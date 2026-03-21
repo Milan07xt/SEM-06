@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Face Recognition Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/about-us.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="about-page">
+        <section class="about-hero">
+            <p class="eyebrow">About Us</p>
+            <h1>Face Recognition Attendance System</h1>
+            <p class="subtitle">
+                We built this platform to make attendance faster, smarter, and more reliable using secure face-based automation.
+            </p>
+        </section>
+
+        <section class="about-grid">
+            <article class="about-card">
+                <h2>🎯 Our Mission</h2>
+                <p>
+                    Simplify daily attendance workflows for classrooms and organizations by reducing manual effort and improving accuracy.
+                </p>
+            </article>
+
+            <article class="about-card">
+                <h2>⚙️ What We Do</h2>
+                <p>
+                    We combine Django, OpenCV, and a clean web interface to offer face registration, attendance marking, and reporting in one system.
+                </p>
+            </article>
+
+            <article class="about-card">
+                <h2>🔒 Security Focus</h2>
+                <p>
+                    Our architecture prioritizes safe data handling, role-based screens, and reliable backend controls for day-to-day operations.
+                </p>
+            </article>
+
+            <article class="about-card">
+                <h2>🚀 Future Vision</h2>
+                <p>
+                    We are continuously improving performance, user experience, and deployment readiness for modern educational and workplace environments.
+                </p>
+            </article>
+        </section>
+
+        <section class="about-cta">
+            <h3>Want to try it now?</h3>
+            <div class="cta-actions">
+                <a href="/register" class="btn btn-primary">Register Face</a>
+                <a href="/live-detection" class="btn btn-secondary">Mark Attendance</a>
+            </div>
+        </section>
+    </main>
+
+    {% include 'includes/footer.html' %}
+</body>
+</html>

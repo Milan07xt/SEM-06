@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Face - Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link active">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+     
+
+        <main>
+            
+    <div class="container">
+        <main>
+            <div class="content">
+                <section class="register-section">
+                    <h2 class="register-title">Register New Face</h2>
+                    <div class="status-message show info" style="margin-bottom: 14px;">
+                        <strong>Face Registration Instructions:</strong>
+                        <ul style="margin: 8px 0 0 18px; text-align: left;">
+                            <li>Enter all details first, then click <strong>Start Camera</strong>.</li>
+                            <li>Look straight, keep your face centered, and stay still for 3 auto-captured images.</li>
+                            <li>After capture completes, click <strong>Register Face</strong>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="register-form">
+                        <div class="form-group">
+                            <label for="nameInput">Full Name:</label>
+                            <input type="text" id="nameInput" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usernameInput">Username:</label>
+                            <input type="text" id="usernameInput" class="form-control" placeholder="Choose a unique username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="passwordInput">Password:</label>
+                            <input type="password" id="passwordInput" class="form-control" placeholder="Enter a secure password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rollNumberInput">Roll Number:</label>
+                            <input type="text" id="rollNumberInput" class="form-control" placeholder="Enter your roll number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailInput">Email:</label>
+                            <input type="email" id="emailInput" class="form-control" placeholder="Enter your email address" required>
+                        </div>
+
+                        <div class="camera-container">
+                            <video id="registerVideo" class="video-feed" autoplay muted playsinline webkit-playsinline></video>
+                            <canvas id="registerCanvas" class="hidden-canvas"></canvas>
+                        </div>
+
+                        <div class="captured-images">
+                            <h3>Captured Images</h3>
+                            <div id="capturedImagesContainer" class="images-grid"></div>
+                            <div id="noImagesMessage" class="no-images-message">No images captured yet</div>
+                        </div>
+
+                        <div class="controls">
+                            <button id="startRegisterCameraBtn" class="btn btn-secondary">Start Camera</button>
+                            <button id="captureRegisterBtn" class="btn btn-primary">Capture Image</button>
+                            <button id="stopRegisterCameraBtn" class="btn btn-danger">Stop Camera</button>
+                            <button id="registerSubmitBtn" class="btn btn-success">Register Face</button>
+                        </div>
+
+                        <div id="registerStatus" class="status-message"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+      
+    </div>
+
+    <script>
+        // Check if admin is logged in and update navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminUsername = localStorage.getItem('adminUsername');
+            const adminNavItem = document.getElementById('adminNavItem');
+            
+            if (adminUsername && adminNavItem) {
+                // Admin is logged in - show Admin Dashboard link
+                adminNavItem.innerHTML = '<a href="/admin_dashboard" class="nav-link" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; font-weight: bold;">Admin Dashboard</a>';
+            }
+        });
+    </script>
+    <script src="{% static 'js/navbar_active.js' %}?v=20260305-1"></script>
+    <script src="{% static 'js/register.js' %}?v=20260312-6"></script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Details - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+</head>
+<body>
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Database Details</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime"></div>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>💾 Database Details</h2>
+
+        <div id="statusMessage" style="margin: 16px 0; color: #cbd5e1;">Loading database details...</div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+            <div class="form-group">
+                <label>Database Status</label>
+                <input type="text" id="dbStatus" class="form-control" value="Loading..." readonly>
+            </div>
+            <div class="form-group">
+                <label>Database Size</label>
+                <input type="text" id="dbSize" class="form-control" value="Loading..." readonly>
+            </div>
+            <div class="form-group">
+                <label>Attendance Records</label>
+                <input type="text" id="attendanceRecords" class="form-control" value="Loading..." readonly>
+            </div>
+            <div class="form-group">
+                <label>Registered Users</label>
+                <input type="text" id="registeredUsers" class="form-control" value="Loading..." readonly>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Database Location</label>
+                <input type="text" id="dbLocation" class="form-control" value="Loading..." readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/settings/'">← Back to Settings</button>
+        <button class="btn btn-secondary" onclick="location.href='/admin_dashboard/'">🏠 Dashboard</button>
+    </div>
+
+    <script>
+        document.getElementById('adminUsername').textContent = localStorage.getItem('adminUsername') || 'Admin';
+
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        async function loadDatabaseDetails() {
+            const statusMessage = document.getElementById('statusMessage');
+            try {
+                const res = await fetch('/api/database_status');
+                const data = await res.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load database details');
+                }
+
+                document.getElementById('dbStatus').value = data.status || 'Connected';
+                document.getElementById('dbSize').value = data.database_size || '-';
+                document.getElementById('attendanceRecords').value = data.attendance_records ?? data.total_records ?? 0;
+                document.getElementById('registeredUsers').value = data.registered_users ?? data.total_users ?? 0;
+                document.getElementById('dbLocation').value = data.database_location || '-';
+                statusMessage.textContent = 'Database details loaded successfully.';
+            } catch (err) {
+                statusMessage.textContent = 'Error loading database details: ' + err.message;
+                document.getElementById('dbStatus').value = 'Error';
+            }
+        }
+
+        loadDatabaseDetails();
+    </script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

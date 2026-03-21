@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Face Recognition Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <style>
+        .help-page {
+            min-height: calc(100vh - 220px);
+            padding: 48px 24px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+        }
+
+        .help-container {
+            max-width: 920px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(44, 47, 74, 0.12);
+            padding: 36px;
+        }
+
+        .help-title {
+            margin: 0 0 8px;
+            color: #2c2f4a;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .help-subtitle {
+            margin: 0 0 28px;
+            color: #596080;
+            text-align: center;
+            font-size: 1.05rem;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .faq-card {
+            border: 1px solid #e8ebf7;
+            border-radius: 12px;
+            padding: 18px;
+            background: #fafbff;
+        }
+
+        .faq-card h3 {
+            margin: 0 0 8px;
+            color: #2c2f4a;
+            font-size: 1.06rem;
+        }
+
+        .faq-card p {
+            margin: 0;
+            color: #4c5577;
+            line-height: 1.65;
+        }
+
+        .support-box {
+            margin-top: 22px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f1f4ff;
+            color: #2c2f4a;
+            text-align: center;
+        }
+
+        .support-box a {
+            color: #2c2f4a;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .support-box a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 760px) {
+            .help-container {
+                padding: 24px;
+            }
+
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="help-page">
+        <section class="help-container">
+            <h1 class="help-title">Help Center</h1>
+            <p class="help-subtitle">Quick answers for common issues in the attendance system.</p>
+
+            <div class="faq-grid">
+                <article class="faq-card">
+                    <h3>How do I register my face?</h3>
+                    <p>Go to Register, enter your details, and capture a clear face image in good lighting.</p>
+                </article>
+
+                <article class="faq-card">
+                    <h3>Face not detected?</h3>
+                    <p>Center your face, keep camera steady, and ensure your room has enough light.</p>
+                </article>
+
+                <article class="faq-card">
+                    <h3>Attendance not marked?</h3>
+                    <p>Try again with a slight blink/movement for liveness, then submit one more frame.</p>
+                </article>
+
+                <article class="faq-card">
+                    <h3>Need admin support?</h3>
+                    <p>Use the Contact Us page and share your username plus screenshot of the issue.</p>
+                </article>
+            </div>
+
+            <div class="support-box">
+                Still stuck? Reach us at <a href="mailto:support@faceattendance.local">support@faceattendance.local</a>
+            </div>
+        </section>
+    </main>
+
+    {% include 'includes/footer.html' %}
+</body>
+</html>

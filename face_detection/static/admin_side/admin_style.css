@@ -1,0 +1,93 @@
+/* 3D Animated Action Buttons */
+.action-btn {
+  display: inline-block;
+  margin: 0 4px;
+  padding: 8px 18px;
+  border-radius: 22px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4f8cff 0%, #3358d1 100%);
+  color: #fff;
+  box-shadow: 0 4px 18px 0 rgba(79,140,255,0.18), 0 1.5px 0 #fff inset;
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(.25,1.7,.45,.87), box-shadow 0.3s;
+  position: relative;
+  animation: action3dPop 1.1s cubic-bezier(.25,1.7,.45,.87);
+}
+.action-btn.action-edit {
+  background: linear-gradient(135deg, #4f8cff 0%, #3358d1 100%);
+}
+.action-btn.action-registered {
+  background: linear-gradient(135deg, #ff9800 0%, #ffb347 100%);
+  box-shadow: 0 4px 18px 0 rgba(255,152,0,0.18), 0 1.5px 0 #fff inset;
+}
+.action-btn.action-delete {
+  background: linear-gradient(135deg, #ff5858 0%, #f857a6 100%);
+  box-shadow: 0 4px 18px 0 rgba(255,88,88,0.18), 0 1.5px 0 #fff inset;
+}
+.action-btn:hover {
+  transform: rotateY(18deg) scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.22), 0 2.5px 0 #fff inset;
+  z-index: 2;
+}
+@keyframes action3dPop {
+  0% { transform: scale(0.7) rotateY(-60deg); opacity: 0; }
+  60% { transform: scale(1.1) rotateY(18deg); opacity: 1; }
+  100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+}
+.admin-only-label {
+  font-size: 0.95em;
+  color: #888;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+/* 3D Animated Status Badge */
+
+/* Modern gradient top border for header or main card */
+.admin-header, .admin-card {
+  border-top: 5px solid;
+  border-image: linear-gradient(90deg, #7F7FD5, #86A8E7, #91EAE4) 1;
+}
+.status-present, .status-absent, .status-other {
+  display: inline-block;
+  min-width: 90px;
+  padding: 8px 22px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 18px 0 rgba(0,0,0,0.18), 0 1.5px 0 #fff inset;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: #fff;
+  border: none;
+  outline: none;
+  perspective: 400px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(.25,1.7,.45,.87), box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+  animation: status3dPop 1.1s cubic-bezier(.25,1.7,.45,.87);
+}
+.status-present {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  box-shadow: 0 4px 18px 0 rgba(56,239,125,0.18), 0 1.5px 0 #fff inset;
+}
+.status-absent {
+  background: linear-gradient(135deg, #ff5858 0%, #f857a6 100%);
+  box-shadow: 0 4px 18px 0 rgba(255,88,88,0.18), 0 1.5px 0 #fff inset;
+}
+.status-other {
+  background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+  box-shadow: 0 4px 18px 0 rgba(67,206,162,0.18), 0 1.5px 0 #fff inset;
+}
+.status-present:hover, .status-absent:hover, .status-other:hover {
+  transform: rotateY(18deg) scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.22), 0 2.5px 0 #fff inset;
+}
+@keyframes status3dPop {
+  0% { transform: scale(0.7) rotateY(-60deg); opacity: 0; }
+  60% { transform: scale(1.1) rotateY(18deg); opacity: 1; }
+  100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+}

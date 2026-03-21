@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance - Admin Panel</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_side_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_top_nav_stylish.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_mark_attendance_stylish.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1>⚡ Admin Control Panel</h1>
+            <p class="subtitle">Face Detection Attendance System - Administrator Dashboard</p>
+        </div>
+        <div class="admin-info">
+            <div class="username" id="adminUsername">Admin</div>
+            <div class="timestamp" id="currentTime">3/1/2026, 2:51:09 pm</div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="dashboard-top-nav">
+                <div class="sidebar-nav">
+                    <button onclick="location.href='/admin_dashboard/'" class="sidebar-nav-btn active">
+                        <span class="icon">📊</span> Dashboard
+                    </button>
+                    <button onclick="location.href='/mark_attendance/'" class="sidebar-nav-btn">
+                        <span class="icon">✓</span> Mark Attendance
+                    </button>
+                    <button onclick="location.href='/register_user/'" class="sidebar-nav-btn">
+                        <span class="icon">📸</span> Register User
+                    </button>
+                    <button onclick="location.href='/view_user/'" class="sidebar-nav-btn">
+                        <span class="icon">👥</span> Users
+                    </button>
+                    <button onclick="location.href='/attendance_records/'" class="sidebar-nav-btn">
+                        <span class="icon">📋</span> Records
+                    </button>
+                    <button onclick="location.href='/settings/'" class="sidebar-nav-btn">
+                        <span class="icon">⚙️</span> Settings
+                    </button>
+                </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="admin-card">
+        <h2>✓ Mark Attendance</h2>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert"></div>
+
+        <!-- Manual Attendance Form -->
+        <div class="form-group">
+            <label for="selectUser">Select User:</label>
+            <select id="selectUser" class="form-control">
+                <option value="">-- Select a user --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="attendanceStatus">Status:</label>
+            <select id="attendanceStatus" class="form-control">
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+                <option value="Late">Late</option>
+                <option value="Excused">Excused</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Notes (Optional):</label>
+            <textarea id="notes" class="form-control" rows="3" placeholder="Add any notes..."></textarea>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-success" id="markAttendanceBtn">✓ Mark Attendance</button>
+            <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+        </div>
+    </div>
+
+    <!-- Or Use Face Recognition -->
+    <div class="admin-card">
+        <h2>📸 Or Use Face Recognition</h2>
+
+        <div class="form-group">
+            <label>Capture Face to Mark Attendance:</label>
+            <div class="video-container" id="videoContainer" style="display: none;">
+                <video id="videoFeed" autoplay muted playsinline></video>
+                <canvas id="captureCanvas"></canvas>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="startCameraBtn">📹 Start Camera</button>
+                <button class="btn btn-success" id="captureBtn" disabled>📸 Capture & Mark</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Attendance -->
+    <div class="admin-card">
+        <h2>📋 Recent Attendance (Today)</h2>
+        <div class="attendance-actions">
+            <button class="btn btn-secondary" id="selectAllAttendanceBtn" type="button">☑️ Select All</button>
+            <button class="btn btn-primary" id="editSelectedAttendanceBtn" type="button">✏️ Edit Selected</button>
+            <button class="btn btn-success" id="updateSelectedAttendanceBtn" type="button">✅ Update Selected</button>
+            <button class="btn btn-danger" id="deleteSelectedAttendanceBtn" type="button">🗑️ Delete Selected</button>
+            <button class="btn btn-warning" id="deleteAllAttendanceBtn" type="button">🔥 Delete All Attendance</button>
+            <span class="selection-count" id="selectedAttendanceCount">0 selected</span>
+        </div>
+        <div id="recentAttendance">
+            <p style="text-align: center; color: #94a3b8; padding: 20px;">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+        <button class="btn btn-primary" onclick="location.href='/admin_dashboard'">← Back to Home</button>
+        <button class="btn btn-danger" onclick="logout()">🔓 Logout</button>
+    </div>
+
+    {% include 'includes/footer.html' %}
+
+    <script src="{% static 'mark_attendance.js' %}?v=20260305-1"></script>
+</body>
+</html>

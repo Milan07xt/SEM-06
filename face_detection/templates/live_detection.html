@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/live_detection.css' %}">
+</head>
+<body>
+ <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
+                <span class="brand-text">Face Detection Attendance System</span>
+            </div>
+            <div class="navbar-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/live-detection" class="nav-link active">Mark Attendance</a>
+                <a href="/register" class="nav-link">Register</a>
+                <a href="/attendance_record" class="nav-link">Records</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <main>
+            <section class="detection-section">
+                <div class="detection-card">
+                    <div class="detection-header">
+                        <h2>📷 Automated Face Recognition Attendance</h2>
+                        <p>Position your face in front of the camera to mark attendance automatically</p>
+                        <div class="subject-select-wrap">
+                            <label for="subjectSelect">📘 Subject</label>
+                            <div class="subject-input-row">
+                                <select id="subjectSelect" name="subject" class="subject-select">
+                                    <option value="">Select Subject</option>
+                                    <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                    <option value="Database Management System">Database Management System</option>
+                                    <option value="Computer Networks">Computer Networks</option>
+                                    <option value="Operating Systems">Operating Systems</option>
+                                    <option value="Software Engineering">Software Engineering</option>
+                                </select>
+                                <button type="button" id="subjectOkBtn" class="btn-small btn-primary subject-ok-btn">OK</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="detection-container">
+                        <div class="video-wrapper">
+                            <video id="videoFeed" class="live-video" autoplay muted playsinline webkit-playsinline></video>
+                            <canvas id="captureCanvas" class="detection-canvas"></canvas>
+                            <div class="live-badge">🔴 LIVE</div>
+                            <div class="detection-overlay">
+                                <p id="overlayText">Position your face in the frame</p>
+                            </div>
+                        </div>
+
+                        <div class="status-box" id="statusBox">
+                            <div class="status-content">
+                                <span class="status-icon">✨</span>
+                                <span class="status-text" id="statusText">The system will recognize your face and mark attendance automatically</span>
+                            </div>
+                        </div>
+
+                        <div class="latest-attendance-card" id="latestAttendanceCard">
+                            <h4>🧾 Latest Attendance Details</h4>
+                            <div id="latestAttendanceDetails" class="latest-attendance-details">
+                                <p class="latest-attendance-empty">No attendance marked yet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Auto-detection enabled - No manual button needed -->
+
+                    <div id="cameraHelp" class="help-box" style="display:none;">
+                        <h4>🔒 Camera Locked - Try These Steps:</h4>
+                        <ol>
+                            <li>Close apps using the camera: Zoom/Teams/Meet, WhatsApp Desktop, OBS, camera preview tools</li>
+                            <li>Keep only one tab of this app open; refresh the page</li>
+                            <li>If still blocked: restart the browser, reopen this page first, click "Retry Camera"</li>
+                            <li>Check Windows: Settings → Privacy & security → Camera → allow camera for Desktop apps and your browser</li>
+                            <li>If nothing works, reboot to release the camera lock</li>
+                        </ol>
+                        <div class="retry-row">
+                            <button id="retryBtn" class="btn-small btn-primary" onclick="retryCamera()">
+                                🔄 Retry Camera
+                            </button>
+                            <span class="retry-hint">Close other apps using camera, then click retry</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="instructions-card">
+                    <h3>📋 Instructions</h3>
+                    <ol>
+                        <li>Position your face clearly in front of the camera</li>
+                        <li>Make sure your face is well-lit and visible</li>
+                        <li>The system will automatically detect and recognize your face</li>
+                        <li>Attendance will be marked automatically when your face is detected</li>
+                        <li>If face is not registered, you'll be prompted to register first</li>
+                        <li>Please wait 3-5 seconds for detection to complete</li>
+                    </ol>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Popup Modal -->
+    <div id="popupOverlay" class="popup-overlay" style="display:none;" onclick="closePopup()"></div>
+    <div id="popupModal" class="popup-modal" style="display:none;"></div>
+
+
+    <script src="{% static 'js/navbar_active.js' %}"></script>
+    <script src="{% static 'js/live_detection.js' %}"></script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>

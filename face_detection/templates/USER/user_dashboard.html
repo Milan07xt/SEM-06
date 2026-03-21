@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Face Attendance System</title>
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Face Detection Attendance System</h1>
+            <nav>
+                <ul>
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li><a href="/user_dashboard" class="nav-link active">My Dashboard</a></li>
+                    <li><a href="/user_profile" id="myProfileNav" class="nav-link">My Profile</a></li>
+                    <li id="userNavItem">
+                        <span class="user-welcome">Welcome, <span id="userDisplayName">User</span></span>
+                    </li>
+                    <li><button id="logoutBtn" class="btn btn-danger btn-sm">Logout</button></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="content">
+                <section class="dashboard-section">
+                    <div class="dashboard-header">
+                        <h2>📊 My Attendance Dashboard</h2>
+                        <p class="user-info">
+                            <span id="userRollNumber">Roll: N/A</span> | 
+                            <span id="userEmail">No email</span>
+                        </p>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Total Days Present</p>
+                                <p class="stat-value" id="totalPresent">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Attendance Rate</p>
+                                <p class="stat-value" id="attendanceRate">0%</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">📍</div>
+                            <div class="stat-content">
+                                <p class="stat-label">This Month</p>
+                                <p class="stat-value" id="monthlyPresent">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">⏰</div>
+                            <div class="stat-content">
+                                <p class="stat-label">Last Attendance</p>
+                                <p class="stat-value stat-time" id="lastAttendance">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Chart -->
+                    <div class="chart-section">
+                        <div class="chart-box">
+                            <h3>📈 Attendance Trend (Last 30 Days)</h3>
+                            <canvas id="attendanceChart"></canvas>
+                        </div>
+
+                        <div class="summary-box">
+                            <h3>📋 Monthly Summary</h3>
+                            <div class="summary-list">
+                                <div class="summary-item">
+                                    <span class="summary-label">Present Days:</span>
+                                    <span class="summary-value present" id="summaryPresent">0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Absent Days:</span>
+                                    <span class="summary-value absent" id="summaryAbsent">0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Working Days:</span>
+                                    <span class="summary-value" id="summaryTotal">0</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Percentage:</span>
+                                    <span class="summary-value highlight" id="summaryPercentage">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Attendance History -->
+                    <div class="history-section">
+                        <div class="history-header">
+                            <h3>🕒 Recent Attendance History</h3>
+                            <div class="filter-controls">
+                                <select id="filterMonth" class="filter-select">
+                                    <option value="all">All Time</option>
+                                    <option value="current" selected>This Month</option>
+                                    <option value="last">Last Month</option>
+                                </select>
+                                <button id="exportBtn" class="btn btn-secondary btn-sm">📄 Export PDF</button>
+                                <button id="refreshBtn" class="btn btn-primary btn-sm">🔄 Refresh</button>
+                            </div>
+                        </div>
+
+                        <div class="attendance-table-container">
+                            <table class="attendance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>⚡ Quick Actions</h3>
+                        <div class="action-buttons">
+                            <a href="/" class="action-btn">
+                                <span class="action-icon">📸</span>
+                                <span class="action-text">Mark Attendance</span>
+                            </a>
+                            <a href="{% url 'face_detection:user_edit_profile' %}" class="action-btn">
+                                <span class="action-icon">👤</span>
+                                <span class="action-text">Edit Profile</span>
+                            </a>
+                            <button id="changePasswordBtn" class="action-btn">
+                                <span class="action-icon">🔑</span>
+                                <span class="action-text">Change Password</span>
+                            </button>
+                            <button id="downloadReportBtn" class="action-btn">
+                                <span class="action-icon">📊</span>
+                                <span class="action-text">Download Report</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="dashboardStatus" class="status-message"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>🔑 Change Password</h3>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password:</label>
+                    <input type="password" id="currentPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password:</label>
+                    <input type="password" id="newPassword" class="form-control" required>
+                    <small class="password-hint">Minimum 8 characters, include uppercase, lowercase, and numbers</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password:</label>
+                    <input type="password" id="confirmPassword" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/user_dashboard.js' %}"></script>
+    {% include 'includes/footer.html' %}
+</body>
+</html>
