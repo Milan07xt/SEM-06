@@ -4,9 +4,6 @@ numpy>=1.26
 Pillow>=10.0
 openai>=1.50.0
 python-dotenv>=1.0.1
-gunicorn>=21.2.0
 whitenoise>=6.7.0
 dj-database-url>=2.2.0
 psycopg2-binary>=2.9.9
-gunicorn Face_Detection_Project.wsgi
-pip install dj-database-url
