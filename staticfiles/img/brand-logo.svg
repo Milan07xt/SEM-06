@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Face Detection logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <linearGradient id="scan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00d084" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="112" height="112" rx="24" fill="url(#bg)"/>
+  <rect x="22" y="22" width="84" height="84" rx="18" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.28)"/>
+
+  <circle cx="50" cy="54" r="7" fill="#ffffff"/>
+  <circle cx="78" cy="54" r="7" fill="#ffffff"/>
+  <path d="M45 78c5 7 12 10 19 10s14-3 19-10" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+
+  <rect x="26" y="34" width="76" height="8" rx="4" fill="url(#scan)">
+    <animate attributeName="y" values="34;86;34" dur="2.8s" repeatCount="indefinite"/>
+  </rect>
+</svg>

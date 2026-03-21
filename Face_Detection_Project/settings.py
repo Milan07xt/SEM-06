@@ -5,6 +5,7 @@ Django settings for Face_Detection_Project.
 from pathlib import Path
 import os
 import importlib.util
+import dj_database_url
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
@@ -34,7 +35,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this-in-production-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _env_bool('DJANGO_DEBUG', True)
 
-ALLOWED_HOSTS = _env_list('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost')
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'sem-06-production.up.railway.app'
+]
+
 CSRF_TRUSTED_ORIGINS = _env_list('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:8000,http://localhost:8000')
 
 
@@ -88,10 +94,7 @@ WSGI_APPLICATION = 'Face_Detection_Project.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(conn_max_age=600)
 }
 
 DATABASE_URL = os.getenv('DATABASE_URL', '').strip()

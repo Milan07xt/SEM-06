@@ -1,0 +1,3 @@
+[build]
+python = "3.12"
+packages = []
