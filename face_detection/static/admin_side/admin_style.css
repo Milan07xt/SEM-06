@@ -21,8 +21,8 @@
   background: linear-gradient(135deg, #4f8cff 0%, #3358d1 100%);
 }
 .action-btn.action-registered {
-  background: linear-gradient(135deg, #ff9800 0%, #ffb347 100%);
-  box-shadow: 0 4px 18px 0 rgba(255,152,0,0.18), 0 1.5px 0 #fff inset;
+  background: linear-gradient(135deg, #4f8cff 0%, #3358d1 100%);
+  box-shadow: 0 4px 18px 0 rgba(79,140,255,0.18), 0 1.5px 0 #fff inset;
 }
 .action-btn.action-delete {
   background: linear-gradient(135deg, #ff5858 0%, #f857a6 100%);

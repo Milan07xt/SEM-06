@@ -15,7 +15,6 @@ from pathlib import Path
 from datetime import datetime, timezone as dt_timezone
 import cv2
 import os
-import uuid
 import json as json_module
 import sqlite3
 from urllib.parse import quote
@@ -71,29 +70,6 @@ def _decode_data_url_to_bgr(image_data_url):
     if len(image_array.shape) == 2:
         return cv2.cvtColor(image_array, cv2.COLOR_GRAY2BGR)
     return image_array
-
-
-def _save_image_data_to_disk(image_data_url, save_dir, prefix='capture'):
-    """Save a base64 image data URL to disk and return the file path."""
-    if not image_data_url or ',' not in image_data_url:
-        raise ValueError('Invalid image data URL')
-
-    save_path = Path(save_dir)
-    save_path.mkdir(parents=True, exist_ok=True)
-
-    header, encoded = image_data_url.split(',', 1)
-    image_bytes = base64.b64decode(encoded)
-    extension = 'jpg'
-    if 'png' in header.lower():
-        extension = 'png'
-
-    file_name = f"{prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.{extension}"
-    full_path = save_path / file_name
-
-    with open(full_path, 'wb') as f:
-        f.write(image_bytes)
-
-    return str(full_path)
 
 
 def _detect_primary_face(gray_image):
@@ -988,8 +964,18 @@ def _save_face_encodings(encodings_data):
             key = str(username or '').strip()
             if not key:
                 continue
-            normalized = value if isinstance(value, list) else []
-            payload = json_module.dumps(normalized)
+
+            normalized = []
+            if isinstance(value, list):
+                for encoding in value:
+                    if hasattr(encoding, 'tolist'):
+                        normalized.append(encoding.tolist())
+                    elif isinstance(encoding, list):
+                        normalized.append([float(v) for v in encoding])
+                    else:
+                        normalized.append(encoding)
+
+            payload = json_module.dumps(normalized, ensure_ascii=False)
             conn.execute(
                 """
                 INSERT INTO face_encodings_json (username, encodings_json, encoding_count)
@@ -1848,10 +1834,6 @@ def api_register_face(request):
             previous_bgr = None
             if previous_image_data:
                 try:
-                    _save_image_data_to_disk(previous_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix=f'register_{username}_previous')
-                except Exception:
-                    pass
-                try:
                     previous_bgr = _decode_data_url_to_bgr(previous_image_data)
                 except Exception:
                     previous_bgr = None
@@ -1901,10 +1883,6 @@ def api_register_face(request):
                     image = Image.open(BytesIO(image_bytes)).convert('RGB')
                     image_path = user_folder / f'face_{timestamp_prefix}_{idx:02d}.jpg'
                     image.save(image_path, format='JPEG', quality=95)
-                    try:
-                        _save_image_data_to_disk(raw_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix=f'register_{username}_{idx:02d}')
-                    except Exception:
-                        pass
                     saved_images_count += 1
                 except Exception:
                     continue
@@ -2024,18 +2002,9 @@ def api_mark_attendance_face(request):
                     'message': f'Invalid image format: {str(e)}'
                 })
 
-            try:
-                _save_image_data_to_disk(image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix='attendance')
-            except Exception:
-                pass
-
             # Optional previous frame for temporal liveness
             previous_bgr = None
             if previous_image_data:
-                try:
-                    _save_image_data_to_disk(previous_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix='attendance_previous')
-                except Exception:
-                    pass
                 try:
                     previous_bgr = _decode_data_url_to_bgr(previous_image_data)
                 except Exception:
@@ -2064,7 +2033,7 @@ def api_mark_attendance_face(request):
                 
                 if face_box is None:
                     use_ai_detection = bool(data.get('use_ai_detection', False))
-                    ai_feedback = _ai_live_face_feedback(image_cv) if use_ai_detection else None
+                    ai_feedback = _ai_live_face_feedback(image_data) if use_ai_detection else None
 
                     message = 'No face detected in image'
                     instruction = 'Please center your face in frame with better lighting.'
@@ -2458,18 +2427,15 @@ def api_database_status(request):
             attendance_file = _get_attendance_file()
             db_file = _get_known_faces_db_path()
             db_file_abs = db_file.expanduser().resolve()
-            requested_db_display_path = str(db_file_abs)
             
             # Count registered users
             registered_count = 0
             if known_faces_dir.exists():
                 registered_count = len([d for d in known_faces_dir.iterdir() if d.is_dir() and not d.name.startswith('.')])
             
-            # Count attendance records
-            attendance_count = 0
-            if attendance_file.exists():
-                with attendance_file.open('r', encoding='utf-8') as f:
-                    attendance_count = sum(1 for line in f if line.strip())
+            # Count attendance records using the actual attendance list
+            attendance_records = _load_attendance_records()
+            attendance_count = len(attendance_records)
             # Compute lightweight database size (attendance CSV size)
             db_size_bytes = attendance_file.stat().st_size if attendance_file.exists() else 0
             if db_size_bytes < 1024:
@@ -2482,14 +2448,13 @@ def api_database_status(request):
             # Known-faces SQLite DB stats (attendance.db)
             known_faces_db = {'db_path': '', 'total_rows': 0}
             known_faces_db = _get_known_faces_db_stats()
-            requested_db_display_path = str(db_file_abs)
 
             return JsonResponse({
                 'success': True,
                 # New keys used by current template
                 'registered_users': registered_count,
                 'attendance_records': attendance_count,
-                'database_location': requested_db_display_path,
+                'database_location': str(db_file_abs),
                 'faces_location': str(known_faces_dir),
                 'known_faces_db_path': known_faces_db.get('db_path', ''),
                 'known_faces_db_records': known_faces_db.get('total_rows', 0),
@@ -2810,22 +2775,17 @@ def api_update_face_photo(request):
     try:
         data = json.loads(request.body)
         username = (data.get('username') or '').strip()
-        raw_image_data = data.get('image', '')
+        image_data = data.get('image', '')
 
         if not username:
             return JsonResponse({'success': False, 'message': 'Username is required'}, status=400)
         
-        if not raw_image_data or not raw_image_data.startswith('data:image'):
+        if not image_data or not image_data.startswith('data:image'):
             return JsonResponse({'success': False, 'message': 'Valid image data is required'}, status=400)
-
-        try:
-            _save_image_data_to_disk(raw_image_data, r"E:\FACE-DETECTION\IMAGE_DATA", prefix=f'update_face_{username}')
-        except Exception:
-            pass
 
         # Decode base64 image
         try:
-            image_data = raw_image_data.split(',')[1]
+            image_data = image_data.split(',')[1]
             image_bytes = base64.b64decode(image_data)
             image = Image.open(BytesIO(image_bytes))
             image_np = np.array(image)

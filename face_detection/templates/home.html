@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     {% load static %}
     <meta charset="UTF-8">
@@ -11,10 +10,9 @@
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
-
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar">
+  <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-brand">
                 <img class="brand-icon" src="{% static 'img/brand-logo.svg' %}" alt="Face Detection Logo">
@@ -44,10 +42,8 @@
         <div class="hero-image">
             <div class="face-animation">
                 <div class="face-box">
-                    <div class="eyes-container">
-                        <span class="eye left-eye">●</span>
-                        <span class="eye right-eye">●</span>
-                    </div>
+                    <span class="eye left-eye">●</span>
+                    <span class="eye right-eye">●</span>
                     <div class="smile">⌣</div>
                 </div>
             </div>
@@ -108,26 +104,26 @@
         <div class="steps-container">
             <div class="step">
                 <div class="step-number">1</div>
-                <h3>User Onboarding</h3>
-                <p>Quickly enroll by securely capturing your facial biometrics. Our system instantly creates an encrypted, unique face map.</p>
+                <h3>Register Your Face</h3>
+                <p>Capture your face image using the registration feature. The system generates a unique face encoding.</p>
             </div>
             <div class="step-arrow">→</div>
             <div class="step">
                 <div class="step-number">2</div>
-                <h3>Live Scanning</h3>
-                <p>Simply walk up to the camera terminal. The AI engine performs lightning-fast, continuous spatial face detection in real-time.</p>
+                <h3>Face Detection</h3>
+                <p>When marking attendance, the system detects your face using advanced computer vision.</p>
             </div>
             <div class="step-arrow">→</div>
             <div class="step">
                 <div class="step-number">3</div>
-                <h3>AI Verification</h3>
-                <p>Your live capture is instantly cross-referenced against securely stored biometric encodings using ultra-precise matching.</p>
+                <h3>Instant Matching</h3>
+                <p>Your face is compared with stored encodings to find a match.</p>
             </div>
             <div class="step-arrow">→</div>
             <div class="step">
                 <div class="step-number">4</div>
-                <h3>Automated Logging</h3>
-                <p>Upon successful verification, your attendance is perfectly logged with tamper-proof timestamps and immediately available.</p>
+                <h3>Record Attendance</h3>
+                <p>Attendance is automatically recorded with timestamp and status.</p>
             </div>
         </div>
     </section>
@@ -194,5 +190,4 @@
     <script src="{% static 'js/navbar_active.js' %}"></script>
     <script src="{% static 'js/home.js' %}"></script>
 </body>
-
 </html>

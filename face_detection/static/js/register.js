@@ -162,11 +162,6 @@ captureRegisterBtn.addEventListener('click', async () => {
         return;
     }
 
-    if (capturedImages.length >= 3) {
-        showStatus('❌ Limit reached: You can only capture up to 3 images', 'error');
-        return;
-    }
-
     try {
         console.log('[Capture] Canvas dimensions:', {
             videoWidth: registerVideo.videoWidth,
@@ -180,11 +175,6 @@ captureRegisterBtn.addEventListener('click', async () => {
 
         const imageData = registerCanvas.toDataURL('image/jpeg', 0.95);
         capturedImages.push(imageData);
-
-        const noImagesMessage = document.getElementById('noImagesMessage');
-        if (noImagesMessage) {
-            noImagesMessage.style.display = 'none';
-        }
 
         console.log('[Capture] Image captured, total images:', capturedImages.length);
 
@@ -297,10 +287,6 @@ registerSubmitBtn.addEventListener('click', async () => {
                 rollNumberInput.value = '';
                 capturedImages = [];
                 capturedImagesContainer.innerHTML = '';
-                const noImagesMessage = document.getElementById('noImagesMessage');
-                if (noImagesMessage) {
-                    noImagesMessage.style.display = 'block';
-                }
                 registerSubmitBtn.disabled = false;
                 updateButtonStates();
                 showStatus('Ready for next registration', 'info');

@@ -17,6 +17,12 @@ body {
     overflow-x: hidden;
 }
 
+.container {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeInUp 0.85s ease-out 0.1s forwards;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -33,6 +39,16 @@ body::before {
 @keyframes gradient-shift {
     0%, 100% { transform: translate(0, 0); }
     50% { transform: translate(-50px, -50px); }
+}
+
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: translateY(18px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes subjectHalo {
@@ -53,6 +69,20 @@ body::before {
 @keyframes frameGlow {
     0%, 100% { box-shadow: 0 10px 28px rgba(87, 99, 255, 0.32), 0 0 0 0 rgba(168, 85, 247, 0.22); }
     50% { box-shadow: 0 16px 36px rgba(87, 99, 255, 0.45), 0 0 0 8px rgba(168, 85, 247, 0); }
+}
+
+@keyframes domFadeIn {
+    0% { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dropdownGlow {
+    0% {
+        box-shadow: 0 12px 26px rgba(9, 93, 251, 0.24), 0 0 0 4px rgba(0, 89, 255, 0.08);
+    }
+    100% {
+        box-shadow: 0 16px 34px rgba(79, 140, 255, 0.32), 0 0 0 8px rgba(79, 140, 255, 0.14);
+    }
 }
 
 @keyframes frameBorderShift {
@@ -122,7 +152,7 @@ body::before {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(245, 247, 255, 0.68));
     border: 1px solid rgba(99, 102, 241, 0.25);
     backdrop-filter: blur(8px);
-    animation: subjectHalo 3.8s ease-in-out infinite;
+    animation: subjectHalo 3.8s ease-in-out infinite, popIn 0.8s ease-out 0.12s forwards;
 }
 
 .subject-select-wrap label {
@@ -135,20 +165,20 @@ body::before {
 
 .subject-select {
     width: 100%;
-    height: 44px;
-    padding: 10px 40px 10px 14px;
-    border: 1.5px solid rgba(99, 102, 241, 0.45);
-    border-radius: 12px;
-    background-color: #ffffff;
+    height: 46px;
+    padding: 12px 44px 12px 16px;
+    border: 1.8px solid rgba(59, 130, 246, 0.35);
+    border-radius: 16px;
+    background-color: rgba(15, 23, 42, 0.95);
     background-image:
-        linear-gradient(45deg, transparent 50%, #6d6cff 50%),
-        linear-gradient(135deg, #6d6cff 50%, transparent 50%);
+        linear-gradient(45deg, transparent 50%, rgba(96, 165, 250, 0.82) 50%),
+        linear-gradient(135deg, rgba(96, 165, 250, 0.82) 50%, transparent 50%);
     background-position:
-        calc(100% - 17px) calc(50% - 2px),
-        calc(100% - 11px) calc(50% - 2px);
-    background-size: 6px 6px, 6px 6px;
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 10px) calc(50% - 3px);
+    background-size: 8px 8px, 8px 8px;
     background-repeat: no-repeat;
-    color: #1f2937;
+    color: #eef2ff;
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.2;
@@ -157,8 +187,35 @@ body::before {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    box-shadow: 0 6px 14px rgba(99, 102, 241, 0.12);
-    transition: all 0.25s ease, background-position 0.2s ease;
+    box-shadow: 0 14px 35px rgba(15, 23, 42, 0.18);
+    transition: all 0.25s ease, background-position 0.2s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    animation: popIn 0.75s ease-out 0.08s forwards;
+}
+
+.subject-select:focus {
+    border-color: rgba(59, 130, 246, 0.95);
+    box-shadow: 0 16px 34px rgba(59, 130, 246, 0.26), 0 0 0 5px rgba(59, 130, 246, 0.12);
+    background-position:
+        calc(100% - 18px) calc(50% + 3px),
+        calc(100% - 10px) calc(50% + 3px);
+    transform: translateY(-1px);
+    animation: dropdownGlow 1.2s ease-in-out infinite alternate;
+}
+
+.subject-select:hover {
+    border-color: rgba(147, 197, 253, 0.8);
+    box-shadow: 0 10px 24px rgba(59, 130, 246, 0.22);
+    cursor: pointer;
+}
+
+.subject-select:focus::-ms-expand {
+    display: none;
+}
+
+.subject-select option {
+    font-weight: 600;
+    color: #f8fafc;
+    background: #0f172a;
 }
 
 .subject-input-row {
@@ -169,17 +226,20 @@ body::before {
 }
 
 .subject-ok-btn {
-    min-width: 68px;
-    height: 44px;
+    min-width: 72px;
+    height: 46px;
     justify-content: center;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
-    border-radius: 12px;
+    border-radius: 16px;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 16px rgba(109, 108, 255, 0.28);
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.25);
     transition: all 0.25s ease;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    border: none;
 }
 
 .subject-ok-btn::after {
@@ -199,28 +259,9 @@ body::before {
     pointer-events: none;
 }
 
-.subject-select:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 10px 20px rgba(99, 102, 241, 0.16);
-    transform: translateY(-1px);
-    background-position:
-        calc(100% - 17px) calc(50% + 1px),
-        calc(100% - 11px) calc(50% + 1px);
-    animation: subjectRing 0.6s ease-out 1;
-}
-
-.subject-select:hover {
-    border-color: #6d6cff;
-    box-shadow: 0 10px 18px rgba(99, 102, 241, 0.14);
-    background-position:
-        calc(100% - 17px) calc(50% + 1px),
-        calc(100% - 11px) calc(50% + 1px);
-    cursor: pointer;
-}
-
 .subject-ok-btn:hover {
     transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 12px 22px rgba(109, 108, 255, 0.38);
+    box-shadow: 0 14px 24px rgba(59, 130, 246, 0.36);
 }
 
 .subject-ok-btn:hover::after {
@@ -229,11 +270,11 @@ body::before {
 
 .subject-ok-btn:active {
     transform: translateY(0) scale(0.97);
-    box-shadow: 0 4px 10px rgba(109, 108, 255, 0.28);
+    box-shadow: 0 6px 14px rgba(59, 130, 246, 0.28);
 }
 
 .subject-ok-btn:focus-visible {
-    outline: 2px solid #8b5cf6;
+    outline: 2px solid rgba(147, 197, 253, 0.9);
     outline-offset: 2px;
 }
 
@@ -241,16 +282,15 @@ body::before {
     .subject-select-wrap,
     .subject-select,
     .subject-ok-btn,
-    .subject-ok-btn::after {
+    .subject-ok-btn::after,
+    .video-wrapper,
+    .status-box,
+    .latest-attendance-card,
+    .instructions-card,
+    .container {
         animation: none !important;
         transition: none !important;
     }
-}
-
-.subject-select option {
-    font-weight: 600;
-    color: #1e293b;
-    background: #ffffff;
 }
 
 .login-link-btn {
@@ -289,6 +329,9 @@ body::before {
     position: sticky;
     top: 0;
     z-index: 1000;
+    opacity: 0;
+    transform: translateY(-18px);
+    animation: fadeInUp 0.75s ease-out 0.05s forwards;
 }
 
 .navbar-container {
@@ -380,14 +423,9 @@ body::before {
     border: 1px solid rgba(168, 85, 247, 0.15);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-}
-
-.detection-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2), 0 0 50px rgba(102, 126, 234, 0.15);
-}
-
-.section-title {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: popIn 0.8s ease-out 0.16s forwards;
     font-size: 2rem;
     background: linear-gradient(135deg, #667eea 0%, #a855f7 100%);
     -webkit-background-clip: text;
@@ -432,7 +470,7 @@ body::before {
     justify-content: center;
     box-shadow: 0 10px 28px rgba(87, 99, 255, 0.32);
     transition: transform 0.35s ease, box-shadow 0.35s ease;
-    animation: frameGlow 3.8s ease-in-out infinite;
+    animation: frameGlow 3.8s ease-in-out infinite, popIn 0.85s ease-out 0.18s forwards;
     cursor: pointer;
 }
 
@@ -565,6 +603,9 @@ body::before {
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: popIn 0.75s ease-out 0.22s forwards;
 }
 
 .status-box:hover {
@@ -625,9 +666,24 @@ body::before {
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 6px 16px rgba(102, 126, 234, 0.12);
+    opacity: 0;
+    transform: translateY(14px);
+    animation: popIn 0.75s ease-out 0.28s forwards;
 }
 
-.latest-attendance-card h4 {
+.instructions-card {
+    background: rgba(255, 255, 255, 0.84);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 18px 50px rgba(20, 19, 56, 0.14);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transform: translateY(18px);
+    animation: popIn 0.8s ease-out 0.32s forwards;
+}
+
+.instructions-card h3 {
     margin: 0 0 0.75rem;
     color: #5b43d6;
     font-size: 1.05rem;

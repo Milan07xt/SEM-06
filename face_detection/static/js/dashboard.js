@@ -7,7 +7,6 @@ const totalRecordsEl = document.getElementById('totalRecords');
 const presentCountEl = document.getElementById('presentCount');
 const absentCountEl = document.getElementById('absentCount');
 const activityListEl = document.getElementById('activityList');
-const usersTableEl = document.getElementById('usersTable');
 const refreshBtn = document.getElementById('refreshBtn');
 
 // Load dashboard data
@@ -15,97 +14,49 @@ async function loadDashboardData() {
     try {
         showStatus('Loading dashboard data...', 'info');
 
-        const [attendanceResponse, usersResponse] = await Promise.all([
-            fetch('/api/attendance_list'),
-            fetch('/api/users_list')
-        ]);
+        // Fetch attendance records
+        const response = await fetch('/api/attendance_list');
+        const data = await response.json();
 
-        const attendanceData = await attendanceResponse.json();
-        const usersData = await usersResponse.json();
-
-        if (!attendanceData.success) {
-            throw new Error(attendanceData.message || 'Failed to load attendance data');
+        if (data.success) {
+            updateDashboardStats(data.data);
+            displayRecentActivity(data.data);
+            showStatus('Dashboard loaded successfully', 'success');
+        } else {
+            showStatus('Error loading dashboard: ' + data.message, 'error');
         }
-        if (!usersData.success) {
-            throw new Error(usersData.message || 'Failed to load user data');
-        }
-
-        updateDashboardStats(attendanceData.data, usersData.users, usersData.total);
-        displayRegisteredUsers(usersData.users);
-        displayRecentActivity(attendanceData.data);
-        showStatus('Dashboard loaded successfully', 'success');
     } catch (error) {
         showStatus('Error: ' + error.message, 'error');
-        usersTableEl.innerHTML = '<p class="text-center">Unable to load registered users.</p>';
-        activityListEl.innerHTML = '<p class="text-center">Unable to load recent activity.</p>';
     }
 }
 
 // Update dashboard statistics
-function updateDashboardStats(records, users, userCount) {
+function updateDashboardStats(records) {
     // Total records
     totalRecordsEl.textContent = records.length;
 
     // Get today's date
     const today = new Date().toISOString().split('T')[0];
 
-    // Count today's attendance records
+    // Count today's attendance
     const todayRecords = records.filter(record => {
-        const recordDate = (record.timestamp || '').split(' ')[0];
+        const recordDate = record.timestamp.split(' ')[0];
         return recordDate === today;
     });
     todayAttendanceEl.textContent = todayRecords.length;
 
     // Count present and absent
-    const presentCount = records.filter(r => String(r.status).toLowerCase() === 'present').length;
-    const absentCount = records.filter(r => String(r.status).toLowerCase() === 'absent').length;
+    const presentCount = records.filter(r => r.status === 'Present').length;
+    const absentCount = records.filter(r => r.status === 'Absent').length;
     presentCountEl.textContent = presentCount;
     absentCountEl.textContent = absentCount;
 
-    // Registered users count comes from the users API
-    totalUsersEl.textContent = userCount || users.length || 0;
+    // Get unique registered users (approximate)
+    const uniqueUsers = new Set(records.map(r => r.name)).size;
+    totalUsersEl.textContent = uniqueUsers || 0;
 
     // Generate chart
     generateAttendanceChart(records);
-}
-
-function displayRegisteredUsers(users) {
-    if (!users || users.length === 0) {
-        usersTableEl.innerHTML = '<p class="text-center">No registered users found.</p>';
-        return;
-    }
-
-    const table = document.createElement('table');
-    table.className = 'data-table';
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Roll Number</th>
-                <th>Registered</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${users.map(user => `
-                <tr>
-                    <td>${user.id || ''}</td>
-                    <td>${user.name || ''}</td>
-                    <td>${user.username || ''}</td>
-                    <td>${user.email || '-'}</td>
-                    <td>${user.phone || '-'}</td>
-                    <td>${user.roll_number || '-'}</td>
-                    <td>${user.registered_date || '-'}</td>
-                </tr>
-            `).join('')}
-        </tbody>
-    `;
-
-    usersTableEl.innerHTML = '';
-    usersTableEl.appendChild(table);
 }
 
 // Display recent activity

@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: face-recognition-attendance-system
+    env: python
+    plan: free
+    disks:
+      - name: attendance-data
+        mountPath: /var/data
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn Face_Detection_Project.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: ATTENDANCE_CSV_PATH
+        value: /var/data/attendance.csv
+
+# Optional managed database (uncomment if you want persistent DB on Render)
+# databases:
+#   - name: face-recognition-db
+#     plan: free

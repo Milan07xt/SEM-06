@@ -216,7 +216,7 @@ body {
     font-weight: 800;
     color: #fff;
 }
-
+.status-badge.registered { background: linear-gradient(135deg, #0178ff, #056ef7); }
 .status-badge.present { background: linear-gradient(135deg, #10b981, #059669); }
 .status-badge.absent { background: linear-gradient(135deg, #ef4444, #dc2626); }
 .status-badge.leave { background: linear-gradient(135deg, #06b6d4, #0891b2); }

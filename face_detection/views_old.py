@@ -349,7 +349,6 @@ def api_mark_attendance_face(request):
             for captured_encoding in captured_encodings:
                 for user_name, user_encodings in known_face_encodings.items():
                     # Compare with all encodings of this user
-                    
                     matches = face_recognition.compare_faces(user_encodings, captured_encoding, tolerance=0.6)
                     distances = face_recognition.face_distance(user_encodings, captured_encoding)
                     

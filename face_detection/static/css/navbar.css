@@ -1,12 +1,6 @@
 /* Shared Navbar Styles */
-@keyframes navSlideDown {
-    from { transform: translateY(-100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
 .navbar {
     background: linear-gradient(135deg, #667eea, #764ba2);
-    animation: navSlideDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     padding: 0.65rem 0;
     position: sticky;
     top: 0;
@@ -26,14 +20,6 @@
 
 .navbar-brand {
     display: flex;
-    transition: transform 0.3s ease;
-}
-
-.navbar-brand:hover {
-    transform: scale(1.02);
-}
-
-.navbar-brand_original_temp_dont_use {
     align-items: center;
     gap: 10px;
     color: #ffffff;
@@ -74,8 +60,6 @@
 
 .navbar .nav-link {
     color: rgba(255, 255, 255, 0.9);
-    position: relative;
-    overflow: hidden;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -83,28 +67,10 @@
     border-radius: 6px;
 }
 
-.navbar .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.9);
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 2px;
-}
-
-.navbar .nav-link:hover::after,
-.navbar .nav-link.active::after {
-    width: calc(100% - 24px);
-}
-
 .navbar .nav-link:hover,
 .navbar .nav-link.active {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
 }
 
